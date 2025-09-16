@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 Allow: /
-Sitemap: https://anakenralf.github.io/rustiotbblog/sitemap.xml
+Sitemap: https://anakenralf.github.io/rust-iot-blog/sitemap.xml

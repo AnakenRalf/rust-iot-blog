@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Rust and baremetal IoT - esp32</title>
     <subtitle>IoT</subtitle>
-    <link rel="self" type="application/atom+xml" href="https://anakenralf.github.io/rustiotbblog/tags/esp32/atom.xml"/>
-    <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rustiotbblog/"/>
+    <link rel="self" type="application/atom+xml" href="https://anakenralf.github.io/rust-iot-blog/tags/esp32/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rust-iot-blog/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
     <updated>2025-09-16T00:00:00+00:00</updated>
-    <id>https://anakenralf.github.io/rustiotbblog/tags/esp32/atom.xml</id>
+    <id>https://anakenralf.github.io/rust-iot-blog/tags/esp32/atom.xml</id>
     <entry xml:lang="en">
         <title>Second Post</title>
         <published>2025-09-16T00:00:00+00:00</published>
@@ -20,10 +20,10 @@
           </name>
         </author>
         
-        <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rustiotbblog/blog/second-post-20250916/"/>
-        <id>https://anakenralf.github.io/rustiotbblog/blog/second-post-20250916/</id>
+        <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rust-iot-blog/blog/second-post-20250916/"/>
+        <id>https://anakenralf.github.io/rust-iot-blog/blog/second-post-20250916/</id>
         
-        <content type="html" xml:base="https://anakenralf.github.io/rustiotbblog/blog/second-post-20250916/">&lt;p&gt;Test post 2&lt;&#x2F;p&gt;
+        <content type="html" xml:base="https://anakenralf.github.io/rust-iot-blog/blog/second-post-20250916/">&lt;p&gt;Test post 2&lt;&#x2F;p&gt;
 </content>
         
     </entry>
@@ -40,10 +40,10 @@
           </name>
         </author>
         
-        <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rustiotbblog/blog/first-post-20250915/"/>
-        <id>https://anakenralf.github.io/rustiotbblog/blog/first-post-20250915/</id>
+        <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/"/>
+        <id>https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/</id>
         
-        <content type="html" xml:base="https://anakenralf.github.io/rustiotbblog/blog/first-post-20250915/">&lt;p&gt;Test post&lt;&#x2F;p&gt;
+        <content type="html" xml:base="https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/">&lt;p&gt;Test post&lt;&#x2F;p&gt;
 </content>
         
     </entry>
