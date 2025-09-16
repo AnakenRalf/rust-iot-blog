@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="ru" data-theme="light">
 
 <head>
-    <title>Rust and baremetal IoT</title>
+    <title>Rust и IoT Блог</title>
 
     <!-- meta data -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="IoT">
+    <meta name="description" content="Создадим безопасный IoT мир вместе с Rust.">
     <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
 
     <!-- stylesheets, fonts, feeds -->
@@ -55,7 +55,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <div class="navbar-start">
                             <a
                                 class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
-                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
+                                href="/rust-iot-blog/ru">Rust и IoT Блог</a>
                         </div>
                         <div class="navbar-center max-lg:hidden lg:flex">
                             <ul class="menu menu-horizontal px-1 gap-x-2">
@@ -66,11 +66,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
     
+    
 
 
 
-<a href="/rust-iot-blog/blog" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
-        <span class="">Posts</span>
+<a href="/rust-iot-blog/ru&#x2F;blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Посты</span>
 </a>
 
 </li>
@@ -84,8 +85,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
-        <span class="">Tags</span>
+<a href="/rust-iot-blog/ru&#x2F;tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Тэги</span>
 </a>
 
 </li>
@@ -97,7 +98,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                                 
                     <div class="dropdown dropdown-end max-lg:hidden">
-                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <div title="Farbpalette" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
                         <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
                             <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
                             <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
@@ -143,12 +144,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                             <div class="dropdown dropdown-end max-lg:hidden">
                                 <div tabindex="0"
-                                    title="Change Language"
+                                    title="Сменить язык"
                                     role="button"
                                     class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
                                 <ul tabindex="0"
                                     class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
-                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
+                                    <li><button class="btn btn-active btn-primary w-full">Русский</button></li><li>
     
 
     
@@ -158,26 +159,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
         
         
         
-    <a href="/rust-iot-blog/ru/landing" class="btn btn-ghost w-full">Русский</a>
+    <a href="/rust-iot-blog/blog" class="btn btn-ghost w-full">English</a>
 </li>
                                     
                                 </ul>
                             </div>
                             
-                            
-                            <div class="max-md:hidden">
-                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
-                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
-                                    <input id="desktop-search" type="search" class="search-input grow"
-                                        placeholder="Search">
-                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
-                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
-                                </label>
-                            </div>
-                            <label id="search-button" for="search-bar" aria-label="open search"
-                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
-                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
-                            </label>
                             
                             
                             <label for="main-drawer" aria-label="open sidebar"
@@ -191,7 +178,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <label tabindex="0" class="input text-primary bg-primary-content w-full">
                             <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
                             <input id="mobile-search" type="search" class="search-input grow"
-                                placeholder="Search">
+                                placeholder="Поиск">
                         </label>
                     </div>
                 </div>
@@ -234,15 +221,9 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
 
 <div class="flex flex-col items-center mt-10">
-    <h1>Landing</h1>
+    <h1>Посты</h1>
 
-    <p><p>The date of the post.
-Two formats are allowed: YYYY-MM-DD (2012-10-02) and RFC3339 (2002-10-02T15:00:00Z).
-Do not wrap dates in quotes; the line below only indicates that there is no default date.
-If the section variable <code>sort_by</code> is set to <code>date</code>, then any page that lacks a <code>date</code>
-will not be rendered.
-Setting this overrides a date set in the filename.
-date = 2025-09-15</p>
+    <p><p>Давай посмотрим то тут у нас</p>
 </p>
 
     
@@ -251,6 +232,61 @@ date = 2025-09-15</p>
     
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">    
+    
+
+    <!-- 
+        
+         -->
+
+    <div class="card card-border bg-base-200 grow basis-0 max-w-3xl shadow-xl transform transition duration-500 hover:scale-103 ">
+        <figure class="w-full overflow-hidden" style="height: 300px;">
+        
+            <img src="https://anakenralf.github.io/rust-iot-blog/images/iot-mesh.jpg" alt="Почему Rust — отличный выбор для embedded-разработки" style="width:100%; height:100%; object-fit:cover;">
+            
+        </figure>
+        <div class="card-body prose-lg">
+            <a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;first-post-20250915&#x2F;" class="no-underline">
+                <h2 class="card-title text-2xl">Почему Rust — отличный выбор для embedded-разработки</h2>
+            </a>
+
+            <!-- Metadata (date and authors) -->
+            <div class="flex flex-wrap space-x-6 pl-1 mb-2">
+                
+                <span class="flex items-center whitespace-nowrap">
+                    <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" /></svg>
+                    <span><time datetime="2025-09-16">16. сентября 2025</time></span>
+                </span>
+                
+
+                
+            </div>
+
+            <p></p>
+
+            
+            
+            <div class="flex flex-wrap space-x-6 pl-1 mb-2">
+            
+            
+            <span class="flex items-center whitespace-nowrap">
+                <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+                <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/esp32/" class="no-underline hover:underline">esp32</a>
+            </span>
+            
+            <span class="flex items-center whitespace-nowrap">
+                <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+                <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/" class="no-underline hover:underline">rust</a>
+            </span>
+            
+            
+            </div>
+            
+
+            <div class="card-actions justify-end">
+                <a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;first-post-20250915&#x2F;" class="btn btn-secondary">Читать</a>
+            </div>
+        </div>
+    </div>
     
 </div>
 
@@ -271,7 +307,7 @@ date = 2025-09-15</p>
                         <nav class="grid grid-flow-col gap-4 mb-6">
                             
                             <a class="link link-hover"
-                                href="/rust-iot-blog/about">About</a>
+                                href="/rust-iot-blog/ru/about">Кто же я</a>
                             
                         </nav>
                         
@@ -316,11 +352,12 @@ date = 2025-09-15</p>
 
 
     
+    
 
 
 
-<a href="/rust-iot-blog/blog" class="link no-underline ">
-        Posts
+<a href="/rust-iot-blog/ru&#x2F;blog" class="link no-underline menu-active">
+        Посты
 </a>
 
 </li>
@@ -334,8 +371,8 @@ date = 2025-09-15</p>
 
 
 
-<a href="/rust-iot-blog/tags" class="link no-underline ">
-        Tags
+<a href="/rust-iot-blog/ru&#x2F;tags" class="link no-underline ">
+        Тэги
 </a>
 
 </li>
@@ -345,11 +382,11 @@ date = 2025-09-15</p>
                 
                 <li>
                     <details>
-                        <summary class="">Language
+                        <summary class="">Язык
                         </summary>
                         <ul>
                             <li><a href=""
-                                    class="no-underline menu-active">English</a></li><li>
+                                    class="no-underline menu-active">Русский</a></li><li>
     
 
     
@@ -359,7 +396,7 @@ date = 2025-09-15</p>
         
         
         
-    <a href="/rust-iot-blog/ru/landing" class="no-underline">Русский</a>
+    <a href="/rust-iot-blog/blog" class="no-underline">English</a>
 </li>
                             
                         </ul>
@@ -369,7 +406,7 @@ date = 2025-09-15</p>
                 
                 <li>
                     <details>
-                        <summary class="">Theme</summary>
+                        <summary class="">Farbpalette</summary>
                         <ul>
                             
                             <li><button class="" data-set-theme="light">Light</button></li>
@@ -455,8 +492,5 @@ date = 2025-09-15</p>
     </div>
 
     <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
-    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
-    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
-    
     
 </body>

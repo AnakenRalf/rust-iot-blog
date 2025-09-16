@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="ru" data-theme="light">
 
 <head>
-    <title>Why Rust is an Excellent Choice for Embedded Development | Rust and baremetal IoT</title>
+    <title>Почему Rust — отличный выбор для embedded-разработки | Rust и IoT Блог</title>
 
     <!-- meta data -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="IoT">
+    <meta name="description" content="Создадим безопасный IoT мир вместе с Rust.">
     <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
 
     <!-- stylesheets, fonts, feeds -->
@@ -55,7 +55,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <div class="navbar-start">
                             <a
                                 class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
-                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
+                                href="/rust-iot-blog/ru">Rust и IoT Блог</a>
                         </div>
                         <div class="navbar-center max-lg:hidden lg:flex">
                             <ul class="menu menu-horizontal px-1 gap-x-2">
@@ -70,8 +70,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
-        <span class="">Posts</span>
+<a href="/rust-iot-blog/ru&#x2F;blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Посты</span>
 </a>
 
 </li>
@@ -85,8 +85,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
-        <span class="">Tags</span>
+<a href="/rust-iot-blog/ru&#x2F;tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Тэги</span>
 </a>
 
 </li>
@@ -98,7 +98,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                                 
                     <div class="dropdown dropdown-end max-lg:hidden">
-                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <div title="Farbpalette" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
                         <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
                             <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
                             <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
@@ -144,43 +144,29 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                             <div class="dropdown dropdown-end max-lg:hidden">
                                 <div tabindex="0"
-                                    title="Change Language"
+                                    title="Сменить язык"
                                     role="button"
                                     class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
                                 <ul tabindex="0"
                                     class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
-                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
+                                    <li><button class="btn btn-active btn-primary w-full">Русский</button></li><li>
     
 
     
         
             
-        
-            
                 
             
         
+            
         
-    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/first-post-20250915/" class="btn btn-ghost w-full">Русский</a>
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/" class="btn btn-ghost w-full">English</a>
 </li>
                                     
                                 </ul>
                             </div>
                             
-                            
-                            <div class="max-md:hidden">
-                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
-                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
-                                    <input id="desktop-search" type="search" class="search-input grow"
-                                        placeholder="Search">
-                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
-                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
-                                </label>
-                            </div>
-                            <label id="search-button" for="search-bar" aria-label="open search"
-                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
-                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
-                            </label>
                             
                             
                             <label for="main-drawer" aria-label="open sidebar"
@@ -194,7 +180,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <label tabindex="0" class="input text-primary bg-primary-content w-full">
                             <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
                             <input id="mobile-search" type="search" class="search-input grow"
-                                placeholder="Search">
+                                placeholder="Поиск">
                         </label>
                     </div>
                 </div>
@@ -239,28 +225,28 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 <div class="breadcrumbs text-sm">
     <ul>
-        <li><a href="/rust-iot-blog/">Home</a></li>
+        <li><a href="/rust-iot-blog/ru">Home</a></li>
         
         
         
         
         
         
-        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;">Посты</a></li>
         
-        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;first-post-20250915&#x2F;">Why Rust is an Excellent Choice for Embedded Development</a></li>
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;first-post-20250915&#x2F;">Почему Rust — отличный выбор для embedded-разработки</a></li>
     </ul>
 </div>
 
 
-<h1>Why Rust is an Excellent Choice for Embedded Development</h1>
+<h1>Почему Rust — отличный выбор для embedded-разработки</h1>
 
 
 <div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" /></svg>
-        <span class=""><time datetime="2025-09-16">16-Sep-2025</time></span>
+        <span class=""><time datetime="2025-09-16">16. сентября 2025</time></span>
     </span>
     
 
@@ -270,12 +256,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
-        <span class="ml-1">447 words</span>
+        <span class="ml-1">417 Слова</span>
     </span>
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
         <span class="ml-1">3
-            minutes
+            Минуты
         </span>
     </span>
     
@@ -286,12 +272,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/tags/esp32/" class="no-underline hover:underline">esp32</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/esp32/" class="no-underline hover:underline">esp32</a>
     </span>
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/tags/rust/" class="no-underline hover:underline">rust</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/" class="no-underline hover:underline">rust</a>
     </span>
     
     
@@ -299,75 +285,63 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 </div>
 
 
-<p>Developing embedded systems has always been an area where stability and efficiency are crucial. Every byte of memory and every millisecond of processor time matters. Traditionally, C and C++ have been used for such tasks, but today <strong>Rust</strong> is emerging as a language that combines <strong>high performance, reliability, and modern syntax</strong>.</p>
-<h2 id="1-memory-safety">1. Memory Safety</h2>
-<p>One of the biggest challenges in embedded development is memory-related errors: <strong>leaks, buffer overflows, dangling pointers</strong>. On microcontrollers, these issues can lead to device crashes or even dangerous situations.</p>
-<p>Rust addresses these problems at the compiler level. Its ownership and borrowing system strictly controls memory access, preventing most errors before the code even runs.</p>
-<p>Example:</p>
+<p>Разработка встроенных систем всегда была областью, где <strong>стабильность и эффективность имеют решающее значение</strong>. Каждый байт памяти и каждая миллисекунда процессорного времени на счету. Традиционно для таких задач использовались C и C++, но сегодня всё активнее появляется <strong>Rust</strong> — язык, который сочетает <strong>высокую производительность, надёжность и современный синтаксис</strong>.</p>
+<h2 id="1-bezopasnost-raboty-s-pamiat-iu">1. Безопасность работы с памятью</h2>
+<p>Одна из главных проблем в embedded-разработке — ошибки, связанные с памятью: <strong>утечки, переполнения буфера, висячие указатели</strong>. На микроконтроллерах такие ошибки могут привести к сбоям устройства или даже к опасным ситуациям.</p>
+<p>Rust решает эти проблемы на уровне компилятора. Его система владения и заимствования строго контролирует доступ к памяти, предотвращая большинство ошибок ещё до запуска кода.</p>
+<p>Пример:</p>
 <pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-function z-rust"><span class="z-storage z-type z-function z-rust">fn</span> </span><span class="z-entity z-name z-function z-rust">main</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">(</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-end z-rust">)</span></span></span></span><span class="z-meta z-function z-rust"> </span><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-storage z-type z-rust">let</span> s <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-support z-type z-rust">String</span><span class="z-meta z-path z-rust"><span class="z-punctuation z-accessor z-rust">::</span></span>from<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Hello<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-storage z-type z-rust">let</span> r <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>s<span class="z-punctuation z-terminator z-rust">;</span>
-</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-function z-rust">drop</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>s</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Compilation error! You can’t use s after taking a reference
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-function z-rust">drop</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>s</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Ошибка компиляции! Нельзя использовать s после передачи ссылки
 </span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span><span class="z-constant z-other z-placeholder z-rust">{}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> r<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
 </span></code></pre>
-<p>In C++, similar code could cause the device to crash. In Rust, the compiler simply won’t let such code compile.</p>
-<h2 id="2-high-speed-and-low-resource-consumption">2. High Speed and Low Resource Consumption</h2>
-<p>Embedded devices often run on microcontrollers with limited memory and performance. Rust compiles to native code, running almost as fast as C/C++ while avoiding unnecessary overhead.</p>
-<p>For IoT devices, sensors, and controllers, this is critical — every processor cycle and every kilobyte of memory counts.</p>
-<h2 id="3-fewer-bugs-when-working-with-peripherals">3. Fewer Bugs When Working with Peripherals</h2>
-<p>Working with sensors, relays, actuators, and other external devices is prone to errors. Rust helps minimize these mistakes through its strong type system and compile-time checks.</p>
-<p>Example of working with <code>GPIO</code> on <code>STM32</code> in Rust:</p>
+<p>В C++ подобный код может вызвать падение устройства. В Rust компилятор просто не даст такому коду скомпилироваться.</p>
+<h2 id="2-vysokaia-skorost-i-nizkoe-potreblenie-resursov">2. Высокая скорость и низкое потребление ресурсов</h2>
+<p>Встроенные устройства часто работают на микроконтроллерах с ограниченной памятью и производительностью. Rust компилируется в нативный код, работает почти так же быстро, как C/C++, и при этом избегает лишних накладных расходов.</p>
+<p>Для IoT-устройств, датчиков и контроллеров это критично — важен каждый такт процессора и каждый килобайт памяти.</p>
+<h2 id="3-men-she-oshibok-pri-rabote-s-periferiei">3. Меньше ошибок при работе с периферией</h2>
+<p>Работа с датчиками, реле, актуаторами и другими внешними устройствами подвержена ошибкам. Rust помогает минимизировать их благодаря строгой системе типов и проверкам на этапе компиляции.</p>
+<p>Пример работы с <code>GPIO</code> на <code>STM32</code> в Rust:</p>
 <pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">stm32f4xx_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">gpio<span class="z-punctuation z-accessor z-rust">::</span></span>GpioPin<span class="z-punctuation z-terminator z-rust">;</span>
 </span><span class="z-source z-rust">
 </span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-function z-rust"><span class="z-storage z-type z-function z-rust">fn</span> </span><span class="z-entity z-name z-function z-rust">main</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">(</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-end z-rust">)</span></span></span></span><span class="z-meta z-function z-rust"> </span><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> led <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-path z-rust">GpioPin<span class="z-punctuation z-accessor z-rust">::</span></span>new_output<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>PA5<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-keyword z-control z-rust">loop</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
-</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_high</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> turn LED on
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_high</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> включить LED
 </span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">cortex_m<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">asm<span class="z-punctuation z-accessor z-rust">::</span></span>delay<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">8_000_000</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
-</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_low</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> turn LED off
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_low</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> выключить LED
 </span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">cortex_m<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">asm<span class="z-punctuation z-accessor z-rust">::</span></span>delay<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">8_000_000</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
 </span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
 </span></code></pre>
-<p>Errors such as <code>uninitialized pin</code> are caught at compile time rather than during device operation.</p>
-<h2 id="4-specific-boards-and-the-rust-embedded-ecosystem">4. Specific Boards and the Rust Embedded Ecosystem</h2>
-<p>Rust already supports popular microcontrollers such as:</p>
+<p>Ошибки вроде «неинициализированный пин» ловятся на этапе компиляции, а не во время работы устройства.</p>
+<h2 id="4-konkretnye-platy-i-ekosistema-rust-embedded">4. Конкретные платы и экосистема Rust Embedded</h2>
+<p>Rust уже поддерживает популярные микроконтроллеры, такие как:</p>
 <ul>
-<li>
-<p><strong>ESP32</strong> — Wi-Fi and Bluetooth, ideal for IoT devices.</p>
-</li>
-<li>
-<p><strong>STM32</strong> — a wide range of microcontrollers with varying performance.</p>
-</li>
-<li>
-<p><strong>nRF52</strong> — optimized for Bluetooth Low Energy.</p>
-</li>
+<li><strong>ESP32</strong> — Wi-Fi и Bluetooth, идеален для IoT-устройств.</li>
+<li><strong>STM32</strong> — широкий спектр микроконтроллеров разной производительности.</li>
+<li><strong>nRF52</strong> — оптимизирован для Bluetooth Low Energy.</li>
 </ul>
-<p>For these platforms, there are both official and community libraries, including:</p>
+<p>Для этих платформ существуют официальные и коммьюнити-библиотеки, включая:</p>
 <ul>
-<li>
-<p><strong>esp-idf-sys</strong> for <strong>ESP32</strong></p>
-</li>
-<li>
-<p><strong>stm32f4xx-hal</strong> for <strong>STM32</strong></p>
-</li>
-<li>
-<p><strong>nrf-hal</strong> for <strong>nRF52</strong></p>
-</li>
+<li><strong>esp-idf-sys</strong> для <strong>ESP32</strong></li>
+<li><strong>stm32f4xx-hal</strong> для <strong>STM32</strong></li>
+<li><strong>nrf-hal</strong> для <strong>nRF52</strong></li>
 </ul>
-<p>This allows developers to write high-level and safe code without sacrificing performance.</p>
-<h2 id="5-comparison-with-c-c">5. Comparison with C/C++</h2>
-<p>C and C++ are still the standard for embedded development. They provide full control over memory but require extreme care: <strong>one wrong pointer can bring the device down</strong>.</p>
-<p><strong>Rust</strong> combines the <strong>performance</strong> of C/C++ with <strong>compiler-enforced safety</strong>. You also get modern tools: the Cargo package manager, static code analysis, and strict memory control.</p>
-<p>The result: fewer bugs, fewer stressful nights debugging, and more maintainable, readable code.</p>
-<h2 id="6-when-to-choose-rust">6. When to Choose Rust</h2>
+<p>Это позволяет писать высокоуровневый и безопасный код без ущерба для производительности.</p>
+<h2 id="5-sravnenie-s-c-c">5. Сравнение с C/C++</h2>
+<p>C и C++ до сих пор являются стандартом в embedded-разработке. Они дают полный контроль над памятью, но требуют предельной осторожности: <strong>одна ошибка с указателем может положить всё устройство</strong>.</p>
+<p><strong>Rust</strong> сочетает в себе <strong>производительность</strong> C/C++ и <strong>безопасность, обеспечиваемую компилятором</strong>. Плюс — современные инструменты: менеджер пакетов Cargo, статический анализ кода, строгий контроль памяти.</p>
+<p>Результат: меньше багов, меньше бессонных ночей за отладкой и более поддерживаемый, читаемый код.</p>
+<h2 id="6-kogda-vybirat-rust">6. Когда выбирать Rust</h2>
 <ul>
-<li>When reliability and <strong>safety</strong> are <em>critical</em>.</li>
-<li>When efficient use of <strong>memory</strong> and <strong>energy</strong> is <em>important</em>.</li>
-<li>When you <em>want</em> a <strong>modern language</strong> with readable syntax and built-in testing tools.</li>
+<li>Когда надёжность и <strong>безопасность</strong> критичны.</li>
+<li>Когда важна эффективность использования <strong>памяти</strong> и <strong>энергии</strong>.</li>
+<li>Когда хочется современный язык с читаемым синтаксисом и встроенными инструментами для тестирования.</li>
 </ul>
-<p>Rust makes your work safer and opens up opportunities for complex, scalable embedded projects, where C/C++ code could quickly become hard to maintain.</p>
+<p>Rust делает работу безопаснее и открывает возможности для сложных, масштабируемых embedded-проектов, где код на C/C++ быстро становится трудно поддерживаемым.</p>
 
 
 
@@ -389,7 +363,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <nav class="grid grid-flow-col gap-4 mb-6">
                             
                             <a class="link link-hover"
-                                href="/rust-iot-blog/about">About</a>
+                                href="/rust-iot-blog/ru/about">Кто же я</a>
                             
                         </nav>
                         
@@ -438,8 +412,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
-        Posts
+<a href="/rust-iot-blog/ru&#x2F;blog" class="link no-underline menu-active">
+        Посты
 </a>
 
 </li>
@@ -453,8 +427,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/tags" class="link no-underline ">
-        Tags
+<a href="/rust-iot-blog/ru&#x2F;tags" class="link no-underline ">
+        Тэги
 </a>
 
 </li>
@@ -464,23 +438,23 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                 
                 <li>
                     <details>
-                        <summary class="">Language
+                        <summary class="">Язык
                         </summary>
                         <ul>
-                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;first-post-20250915&#x2F;"
-                                    class="no-underline menu-active">English</a></li><li>
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;first-post-20250915&#x2F;"
+                                    class="no-underline menu-active">Русский</a></li><li>
     
 
     
         
             
-        
-            
                 
             
         
+            
         
-    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/first-post-20250915/" class="no-underline">Русский</a>
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/" class="no-underline">English</a>
 </li>
                             
                         </ul>
@@ -490,7 +464,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                 
                 <li>
                     <details>
-                        <summary class="">Theme</summary>
+                        <summary class="">Farbpalette</summary>
                         <ul>
                             
                             <li><button class="" data-set-theme="light">Light</button></li>
@@ -576,8 +550,5 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     </div>
 
     <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
-    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
-    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
-    
     
 </body>
