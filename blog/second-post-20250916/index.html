@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 
 <head>
-    <title>Rust and baremetal IoT</title>
+    <title>ESP32 + Rust: The Legendary “Hello, world!” Quest | Rust and baremetal IoT</title>
 
     <!-- meta data -->
     <meta charset="UTF-8">
@@ -66,10 +66,11 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
     
+    
 
 
 
-<a href="/rust-iot-blog/blog" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
         <span class="">Posts</span>
 </a>
 
@@ -156,9 +157,11 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
             
         
         
+            
+                
+            
         
-        
-    <a href="/rust-iot-blog/ru/" class="btn btn-ghost w-full">Русский</a>
+    <a href="/rust-iot-blog/ru" class="btn btn-ghost w-full">Русский</a>
 </li>
                                     
                                 </ul>
@@ -232,24 +235,128 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
                         <div class="pb-8">
                             
-<h1 class="mt-10">Welcome to My Rust &amp; IoT Blog</h1>
-<p>Hello! This blog is dedicated to <strong>practical IoT projects</strong> using <strong>Rust</strong>. Here, I share my journey of building real devices, from setting up development environments to flashing microcontrollers and creating functional projects.</p>
-<p>Whether you are just starting with Rust on embedded devices, or you’re looking for tips to improve your IoT workflow, this blog is for you.</p>
-<h2 id="what-you-ll-find-here">What You’ll Find Here</h2>
+
+
+<div class="breadcrumbs text-sm">
+    <ul>
+        <li><a href="/rust-iot-blog/">Home</a></li>
+        
+        
+        
+        
+        
+        
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
+        
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;second-post-20250916&#x2F;">ESP32 + Rust: The Legendary “Hello, world!” Quest</a></li>
+    </ul>
+</div>
+
+
+<h1>ESP32 + Rust: The Legendary “Hello, world!” Quest</h1>
+
+
+<div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" /></svg>
+        <span class=""><time datetime="2025-09-17">17-Sep-2025</time></span>
+    </span>
+    
+
+    
+
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
+        <span class="ml-1">352 words</span>
+    </span>
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
+        <span class="ml-1">2
+            minutes
+        </span>
+    </span>
+    
+
+    
+    
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/esp32/" class="no-underline hover:underline">esp32</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/rust/" class="no-underline hover:underline">rust</a>
+    </span>
+    
+    
+    
+</div>
+
+
+<p>When you start a new project, you think: “How hard could it be?”</p>
+<p>I had a <strong>SuperPlan</strong>:</p>
 <ul>
-<li>
-<p>My experiments with <strong>ESP32</strong> and other <strong>microcontrollers</strong>.</p>
-</li>
-<li>
-<p>Practical <strong>IoT</strong> project examples: sensors, actuators, and small devices I’m building.</p>
-</li>
-<li>
-<p>Notes on <strong>troubleshooting</strong>, console logs, and lessons learned along the way.</p>
-</li>
-<li>
-<p>Occasional tips and insights about <strong>Rust</strong> embedded programming, as I’m learning myself.</p>
-</li>
+<li>Get a code editor</li>
+<li>Write <code>fn main()</code> with <code>println!("Hello, world!");</code></li>
+<li>Run <code>cargo build</code></li>
+<li>Flash it to <strong>ESP32</strong></li>
+<li>Celebrate 🎉</li>
 </ul>
+<p><em>…right?</em></p>
+<p><strong>EEEEEEEEEEEEEEEEEEE ❌❌❌</strong></p>
+<p>Reality had other plans...</p>
+<hr />
+<h2 id="round-1-windows-11">Round 1: Windows 11</h2>
+<p>I started straight from my main desktop.
+Rust installed, crates pulled, tried setting up ESP-IDF…
+Result: almost a full day of endless errors.
+Cargo just couldn’t get the right toolchain.
+Lesson learned: Windows + ESP32 + Rust = <strong>chaos</strong>.</p>
+<hr />
+<h2 id="round-2-docker">Round 2: Docker</h2>
+<p>Logical next step: Linux Docker.
+In theory, perfect solution.
+In practice… nope.
+Every variant tried to fetch ESP-IDF from repos, and every time something broke.</p>
+<hr />
+<h2 id="round-3-wsl2">Round 3: WSL2</h2>
+<p>Next logical step: Linux inside WSL2.
+This is perfect. No additional software needed. Ha!
+…until the image of WSL grew beyond 100GB.
+My I/O system went into full panic mode.
+I started using the computer in step-by-step mode… brilliance.
+Time to delete and clean space… again and again.</p>
+<hr />
+<h2 id="round-4-virtualbox">Round 4: VirtualBox</h2>
+<p>Time to go hardcore: a fresh Linux VM. “Easiest installation path”? More like “path to despair.”
+The latest ESP-IDF wasn’t supported, libraries conflicted, nothing worked on the first try.</p>
+<hr />
+<h2 id="round-5-victory">Round 5: Victory</h2>
+<p>Exhaustion, frustration, thoughts: <em>"Why am I even doing this?"</em></p>
+<p>But... After all the patches and retries. My eye almost pops out of orbit when I finally get a successful build and after flashing to device see on the console:</p>
+<pre class="z-code"><code><span class="z-text z-plain">Hello, world!
+</span></code></pre>
+<p>OMG! It's a LIVE!!</p>
+<hr />
+<h2 id="want-a-shortcut">Want a Shortcut?</h2>
+<p>If you’re a beginner and don’t want to spend days configuring your environment, there’s a <a href="https://www.patreon.com/posts/rust-esp32-get-139170844?utm_medium=clipboard_copy&amp;utm_source=copyLink&amp;utm_campaign=postshare_creator&amp;utm_content=join_link">[step-by-step guide on Patreon]</a>.
+It shows way to set up a working Rust + ESP32 environment on Linux without endless errors.</p>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>What should have taken five minutes turned into a multi-day boss fight.
+That’s embedded development: rough tools, confusing instructions, endless errors… and yet, the sense of victory when the first working code finally appears is priceless.</p>
+<p>If I survived “Hello, world!” with Rust + ESP32, the rest should be easier… probably.</p>
+
+
+
+
+
 
 
                         </div>
@@ -315,10 +422,11 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
     
+    
 
 
 
-<a href="/rust-iot-blog/blog" class="link no-underline ">
+<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
         Posts
 </a>
 
@@ -347,7 +455,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <summary class="">Language
                         </summary>
                         <ul>
-                            <li><a href=""
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;second-post-20250916&#x2F;"
                                     class="no-underline menu-active">English</a></li><li>
     
 
@@ -356,9 +464,11 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
             
         
         
+            
+                
+            
         
-        
-    <a href="/rust-iot-blog/ru/" class="no-underline">Русский</a>
+    <a href="/rust-iot-blog/ru" class="no-underline">Русский</a>
 </li>
                             
                         </ul>
