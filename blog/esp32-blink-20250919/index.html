@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <title>Blinking an LED on ESP32 with Rust | Rust and baremetal IoT</title>
+
+    <!-- meta data -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IoT">
+    <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
+
+    <!-- stylesheets, fonts, feeds -->
+    <link rel="stylesheet" href="/rust-iot-blog/css/main.css?DMdNbU" >
+    
+
+    <!-- favicon -->
+    
+
+    <!-- java script for setting theme as saved in local storage (needs to be inline to avoid flicker) -->
+    <script>
+        let default_theme = 'light';
+
+
+default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+
+
+        // try to get theme from local storage and set it (or the default theme) to the HTML element
+        const theme = localStorage.getItem('theme') || default_theme;
+        document.documentElement.setAttribute("data-theme", theme);
+
+        // execute code after the DOM content was loaded
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // select theme at the theme selector (if it is present in the HTML code)
+            var btnEl = document.querySelector("[data-set-theme='" + theme.toString() + "']");
+            if (btnEl) {
+                btnEl.classList.add("btn-active")
+                btnEl.classList.add("btn-primary")
+            }
+        })
+    </script>
+</head>
+
+<body class="h-screen">
+    
+    <div class="@container drawer min-h-full">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle lg:hidden">
+        <div class="drawer-content flex min-h-full flex-col"><!-- to expand over the full screen even on short pages -->
+            <!-- navbar -->
+            <div class="fixed inset-x-0 top-0 z-10 text-primary-content bg-primary shadow-sm opacity-93">
+                <div class="flex flex-col items-center justify-between">
+                    <div class="navbar">
+                        <div class="navbar-start">
+                            <a
+                                class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
+                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
+                        </div>
+                        <div class="navbar-center max-lg:hidden lg:flex">
+                            <ul class="menu menu-horizontal px-1 gap-x-2">
+                                
+                                        <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Posts</span>
+</a>
+
+</li>
+                                    
+                                        <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Tags</span>
+</a>
+
+</li>
+                                    
+                                
+                            </ul>
+                        </div>
+                        <div class="navbar-end">
+                            
+                                
+                    <div class="dropdown dropdown-end max-lg:hidden">
+                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
+                            <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cupcake">Cupcake</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="bumblebee">Bumblebee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="emerald">Emerald</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="corporate">Corporate</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="synthwave">Synthwave</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="retro">Retro</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="valentine">Valentine</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="halloween">Halloween</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="garden">Garden</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="forest">Forest</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="aqua">Aqua</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lofi">Lofi</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="pastel">Pastel</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="fantasy">Fantasy</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="wireframe">Wireframe</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="black">Black</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="luxury">Luxury</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dracula">Dracula</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cmyk">CMYK</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="autumn">Autumn</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="business">Business</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="acid">Acid</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lemonade">Lemonade</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="night">Night</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="coffee">Coffee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winter">Winter</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dim">Dim</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="nord">Nord</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="sunset">Sunset</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="caramellatte">Caramellatte</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="abyss">Abyss</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="silk">Silk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            </ul>
+                    </div>
+
+                            
+                            
+                            <div class="dropdown dropdown-end max-lg:hidden">
+                                <div tabindex="0"
+                                    title="Change Language"
+                                    role="button"
+                                    class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
+                                <ul tabindex="0"
+                                    class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
+                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
+    
+
+    
+        
+            
+        
+        
+            
+                
+            
+        
+    <a href="/rust-iot-blog/ru" class="btn btn-ghost w-full">Русский</a>
+</li>
+                                    
+                                </ul>
+                            </div>
+                            
+                            
+                            <div class="max-md:hidden">
+                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
+                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                                    <input id="desktop-search" type="search" class="search-input grow"
+                                        placeholder="Search">
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
+                                </label>
+                            </div>
+                            <label id="search-button" for="search-bar" aria-label="open search"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
+                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            </label>
+                            
+                            
+                            <label for="main-drawer" aria-label="open sidebar"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary lg:hidden">
+                                <svg role="img" aria-label="List" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-6 w-6 swap-off [:checked~*_&amp;]:!-rotate-45 [:checked~*_&amp;]:!opacity-0" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" /></svg>
+                                <svg role="img" aria-label="X" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-5 w-5 swap-on [:checked~*_&amp;]:!rotate-0 [:checked~*_&amp;]:!opacity-100" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" /></svg>
+                            </label>
+                            </div>
+                    </div>
+                    <div id="search-bar" class="hidden md:hidden pl-2 pr-2 pb-2 w-full">
+                        <label tabindex="0" class="input text-primary bg-primary-content w-full">
+                            <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            <input id="mobile-search" type="search" class="search-input grow"
+                                placeholder="Search">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+
+            <!-- content -->
+            <div class="grid min-h-dvh grid-rows-[1fr_1px_auto_1px_auto] grid-cols-1
+                            ">
+
+                <!-- sidebar -->
+                <div
+                    class="relative col-start-1 row-span-full row-start-1 hidden max-lg:hidden bg-base-200">
+                    <div class="absolute inset-0">
+                        <div
+                            class="sticky top-16 pt-4 bottom-0 left-0 h-full max-h-[calc(100dvh-(var(--spacing)*16))] w-full overflow-y-auto px-6">
+                            <div>
+                                <nav class="flex flex-col gap-8">
+                                    
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main content -->
+                <main
+                    class="relative row-start-1 grid grid-cols-subgrid  m-4">
+                    <div
+                        class="isolate grid max-w-2xl grid-cols-1 gap-10 mt-14 md:pt-6 md:pb-24 xl:max-w-4xl mx-auto">
+                        <!-- search results shown between header and content -->
+                        <div tabindex="0"
+                            class="search-results dropdown-content hidden bg-base-200 text-base-content rounded-box z-1 p-2 shadow-2xl list-none max-w-4xl flex-row lg:absolute lg:right-0 lg:mr-4 max-md:mt-10">
+                            <div class="search-results__items"></div>
+                        </div>
+
+                        <div class="pb-8">
+                            
+
+
+<div class="breadcrumbs text-sm">
+    <ul>
+        <li><a href="/rust-iot-blog/">Home</a></li>
+        
+        
+        
+        
+        
+        
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
+        
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;esp32-blink-20250919&#x2F;">Blinking an LED on ESP32 with Rust</a></li>
+    </ul>
+</div>
+
+
+<h1>Blinking an LED on ESP32 with Rust</h1>
+
+
+<div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" /></svg>
+        <span class=""><time datetime="2025-09-23">23-Sep-2025</time></span>
+    </span>
+    
+
+    
+
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
+        <span class="ml-1">545 words</span>
+    </span>
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
+        <span class="ml-1">3
+            minutes
+        </span>
+    </span>
+    
+
+    
+    
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/esp32/" class="no-underline hover:underline">esp32</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/rust/" class="no-underline hover:underline">rust</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/simple/" class="no-underline hover:underline">simple</a>
+    </span>
+    
+    
+    
+</div>
+
+
+<h2 id="wrench-introduction">🔧 Introduction</h2>
+<p>When starting with ESP32 and Rust, it’s tempting to jump straight into complex IoT projects with sensors, Wi-Fi, and cloud integration. However, for beginners (and even for experienced developers exploring Rust on embedded systems), the best approach is to <strong>start simple</strong>. Building and understanding small circuits helps you get familiar with the board, GPIO pins, the Rust toolchain, and the flashing process, without overwhelming yourself.</p>
+<p>In this tutorial, we’ll begin with one of the simplest yet most illustrative projects: <strong>blinking an external LED</strong>. This project will teach the basics of:</p>
+<ul>
+<li>Designing simple electrical circuits</li>
+<li>Connecting components to ESP32 GPIO pins</li>
+<li>Writing Rust code for embedded systems</li>
+<li>Compiling, flashing, and running firmware on the ESP32</li>
+<li>Observing real-world results</li>
+</ul>
+<p>By completing this tutorial, you’ll gain confidence and a solid foundation for moving on to more complex projects like controlling multiple peripherals, integrating sensors, or building small IoT devices.</p>
+<p>Even though the circuit is simple, it demonstrates important concepts like current limiting with resistors, using GPIO pins correctly, and linking Rust code to hardware.</p>
+<p>So let’s take it step by step, and make our first LED blink!</p>
+<hr />
+<h2 id="triangular-ruler-circuit-design">📐 Circuit Design</h2>
+<p>Before writing code, let's plan the electrical circuit.</p>
+<h3 id="components">Components:</h3>
+<ul>
+<li>ESP32 DevKit or ESP32S Expansion Board</li>
+<li>LED</li>
+<li>220–330 Ω resistor</li>
+<li>Breadboard and jumper wires</li>
+</ul>
+<h3 id="circuit-connection">Circuit Connection:</h3>
+<ol>
+<li><strong>D5 (GPIO5)</strong> on ESP32 → resistor (220–330 Ω)</li>
+<li>Resistor → <strong>anode</strong> of LED (long leg)</li>
+<li><strong>Cathode</strong> of LED (short leg, flat side) → <strong>GND</strong> on ESP32</li>
+</ol>
+<p>Schematic:</p>
+<pre data-lang="cmd" class="language-cmd z-code"><code class="language-cmd" data-lang="cmd"><span class="z-source z-dosbatch">ESP32 D5 <span class="z-meta z-group z-dosbatch"><span class="z-punctuation z-section z-group z-begin z-dosbatch">(</span>GPIO5<span class="z-punctuation z-section z-group z-end z-dosbatch">)</span></span> ---[220Ω]---<span class="z-keyword z-operator z-pipe z-dosbatch">|</span><span class="z-keyword z-operator z-redirection z-dosbatch">&gt;</span><span class="z-keyword z-operator z-pipe z-dosbatch">|</span>--- GND
+</span><span class="z-source z-dosbatch">                             LED
+</span></code></pre>
+<p>Or in graphical mode:</p>
+<p><img src="/images/esp32-blind-diod-schm.png" alt="Circuit" /></p>
+<p>This simple setup demonstrates digital output: setting the GPIO high lights the LED, and setting it low turns it off.</p>
+<hr />
+<h2 id="computer-rust-project-setup">💻 Rust Project Setup</h2>
+<p>We’ll start by generating a new project using the official Rust ESP-IDF template:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">cargo</span></span><span class="z-meta z-function-call z-arguments z-shell"> generate<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>git</span> https://github.com/esp-rs/esp-idf-template.git<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>name</span> esp32-blink-diod</span>
+</span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-support z-function z-cd z-shell">cd</span></span><span class="z-meta z-function-call z-arguments z-shell"> esp32-blink-diod</span>
+</span></code></pre>
+<p>Add the HAL dependency:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">cargo</span></span><span class="z-meta z-function-call z-arguments z-shell"> add esp-idf-hal</span>
+</span></code></pre>
+<p>This crate provides the hardware abstraction layer to control pins, timers, and other peripherals.</p>
+<hr />
+<h2 id="memo-led-blinking-code">📝 LED Blinking Code</h2>
+<p>Open <code>src/main.rs</code></p>
+<pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_svc<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">gpio<span class="z-punctuation z-accessor z-rust">::</span></span>PinDriver<span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">prelude<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-keyword z-operator z-arithmetic z-rust">*</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-function z-rust"><span class="z-storage z-type z-function z-rust">fn</span> </span><span class="z-entity z-name z-function z-rust">main</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">(</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-end z-rust">)</span></span></span></span><span class="z-meta z-function z-rust"> </span><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> It is necessary to call this function once. Otherwise some patches to the runtime
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-meta z-path z-rust">esp_idf_svc<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">sys<span class="z-punctuation z-accessor z-rust">::</span></span>link_patches<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-meta z-path z-rust">esp_idf_svc<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">log<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">EspLogger<span class="z-punctuation z-accessor z-rust">::</span></span>initialize_default<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Initialize the ESP32 periphireals
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-storage z-type z-rust">let</span> periphireals <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-path z-rust">Peripherals<span class="z-punctuation z-accessor z-rust">::</span></span>take<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">unwrap</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Select the GPIO5 pin
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> led <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-path z-rust">PinDriver<span class="z-punctuation z-accessor z-rust">::</span></span>output<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>periphireals<span class="z-punctuation z-accessor z-dot z-rust">.</span>pins<span class="z-punctuation z-accessor z-dot z-rust">.</span>gpio5</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">unwrap</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> And there funn part
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-meta z-path z-rust">log<span class="z-punctuation z-accessor z-rust">::</span></span>info<span class="z-keyword z-operator z-logical z-rust">!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>There we start<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">    <span class="z-keyword z-control z-rust">loop</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_high</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">unwrap</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">log<span class="z-punctuation z-accessor z-rust">::</span></span>info<span class="z-keyword z-operator z-logical z-rust">!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Led ON<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">thread<span class="z-punctuation z-accessor z-rust">::</span></span>sleep<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-meta z-path z-rust">Duration<span class="z-punctuation z-accessor z-rust">::</span></span>from_millis<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">500</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">log<span class="z-punctuation z-accessor z-rust">::</span></span>info<span class="z-keyword z-operator z-logical z-rust">!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Led Off<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_low</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">unwrap</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-meta z-path z-rust">thread<span class="z-punctuation z-accessor z-rust">::</span></span>sleep<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-meta z-path z-rust">Duration<span class="z-punctuation z-accessor z-rust">::</span></span>from_millis<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">500</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span></code></pre>
+<p>This code sets up logging, configures GPIO5 as an output, and toggles the LED every 500 milliseconds. The logs appear in the serial monitor, giving you feedback on what the program is doing.</p>
+<hr />
+<h2 id="electric-plug-build-and-flash">🔌 Build and Flash</h2>
+<p>To build</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">cargo</span></span><span class="z-meta z-function-call z-arguments z-shell"> build<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>release</span></span>
+</span></code></pre>
+<p>In <code>/home/&lt;your_user&gt;/esp32-diod-blink/target/xtensa-esp32-espidf/release/</code> will be places files:</p>
+<ul>
+<li>bootloader.bin</li>
+<li>partition-table.bin</li>
+<li>esp32-diod-blink</li>
+</ul>
+<p>Convert <code>esp32-diod-blink</code> the ELF file to a flashable binary (esp32-diod-blink.bin).
+Full step-by-step installation guide available on my Patreon: <a href="https://www.patreon.com/posts/rust-esp32-get-139170844?utm_medium=clipboard_copy&amp;utm_source=copyLink&amp;utm_campaign=postshare_creator&amp;utm_content=join_link">[step-by-step guide on Patreon]</a>.</p>
+<p>Connect your ESP32 and flash the firmware (check COM port name):</p>
+<pre data-lang="cmd" class="language-cmd z-code"><code class="language-cmd" data-lang="cmd"><span class="z-source z-dosbatch">esptool --chip esp32 --port COM3 --baud <span class="z-constant z-numeric z-integer z-decimal z-dosbatch">460800</span> write_flash -z <span class="z-constant z-numeric z-integer z-hexadecimal z-dosbatch"><span class="z-punctuation z-definition z-numeric z-hexadecimal z-dosbatch">0x</span>1000</span> bootloader.bin <span class="z-constant z-numeric z-integer z-hexadecimal z-dosbatch"><span class="z-punctuation z-definition z-numeric z-hexadecimal z-dosbatch">0x</span>8000</span> partition-table.bin <span class="z-constant z-numeric z-integer z-hexadecimal z-dosbatch"><span class="z-punctuation z-definition z-numeric z-hexadecimal z-dosbatch">0x</span>10000</span> esp32-diod-blink.bin
+</span></code></pre>
+<hr />
+<h2 id="tv-monitoring-results">📺 Monitoring Results</h2>
+<p>Open a serial monitor (for example, PuTTY) to see log messages:</p>
+<p>[Insert illustrative image here]</p>
+<p>You should see the LED blinking in real life and logs alternating "LED ON" and "LED OFF" in the monitor.</p>
+<hr />
+<h2 id="tada-result-and-next-steps">🎉 Result and Next Steps</h2>
+<p>🎉 Conclusion and Next Steps</p>
+<p>By completing this project, we learned how to:</p>
+<ul>
+<li>Design a simple electrical circuit</li>
+<li>Wire an external LED safely to the ESP32</li>
+<li>Write Rust code for embedded hardware</li>
+<li>Compile, flash, and monitor logs on your ESP32</li>
+</ul>
+<p>Next, we can expand this project: for example, create a simple semaphore with multiple LEDs, add buttons, or integrate basic sensors. Starting with small, manageable projects builds a solid foundation for more complex embedded Rust development.</p>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </main>
+
+                <!-- footer -->
+                <div class="row-start-3 ">
+                    
+
+                    
+                    <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded pt-6 gap-0">
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+                            <a class="link link-hover"
+                                href="/rust-iot-blog/about">About</a>
+                            
+                        </nav>
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+
+
+<a href="https:&#x2F;&#x2F;github.com&#x2F;AnakenRalf" title="GitHub" target="_blank"><svg role="img" aria-label="Github" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg></a>
+
+
+
+
+
+
+
+<a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;@Rust-IoT" title="YouTube" target="_blank"><svg role="img" aria-label="Youtube" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z" /></svg></a>
+
+
+
+<a href="https:&#x2F;&#x2F;t.me&#x2F;RustIoT" title="Telegram" target="_blank"><svg role="img" aria-label="Telegram" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09" /></svg></a>
+
+
+
+
+                            
+                        </nav>
+                        
+                        <aside>
+                            <p>© 2025 <a href="https://arlinksqa.web.app/contact">Ruslan Ausiannikau</a><br>Powered by <a href="https://getzola.org">Zola</a>, <a href="https://tailwindcss.com">TailwindCSS</a> & <a href="https://daisyui.com">DaisyUI</a></p>
+                        </aside>
+                        
+                    </footer>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-side z-60">
+            <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <ul class="menu menu-lg bg-base-200 min-h-full w-80 p-4">
+                
+                
+                <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
+        Posts
+</a>
+
+</li>
+                
+                <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="link no-underline ">
+        Tags
+</a>
+
+</li>
+                
+                
+                <hr class="mt-2 mb-2">
+                
+                <li>
+                    <details>
+                        <summary class="">Language
+                        </summary>
+                        <ul>
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;esp32-blink-20250919&#x2F;"
+                                    class="no-underline menu-active">English</a></li><li>
+    
+
+    
+        
+            
+        
+        
+            
+                
+            
+        
+    <a href="/rust-iot-blog/ru" class="no-underline">Русский</a>
+</li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+                
+                <li>
+                    <details>
+                        <summary class="">Theme</summary>
+                        <ul>
+                            
+                            <li><button class="" data-set-theme="light">Light</button></li>
+                            
+                            <li><button class="" data-set-theme="dark">Dark</button></li>
+                            
+                            <li><button class="" data-set-theme="cupcake">Cupcake</button></li>
+                            
+                            <li><button class="" data-set-theme="bumblebee">Bumblebee</button></li>
+                            
+                            <li><button class="" data-set-theme="emerald">Emerald</button></li>
+                            
+                            <li><button class="" data-set-theme="corporate">Corporate</button></li>
+                            
+                            <li><button class="" data-set-theme="synthwave">Synthwave</button></li>
+                            
+                            <li><button class="" data-set-theme="retro">Retro</button></li>
+                            
+                            <li><button class="" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            
+                            <li><button class="" data-set-theme="valentine">Valentine</button></li>
+                            
+                            <li><button class="" data-set-theme="halloween">Halloween</button></li>
+                            
+                            <li><button class="" data-set-theme="garden">Garden</button></li>
+                            
+                            <li><button class="" data-set-theme="forest">Forest</button></li>
+                            
+                            <li><button class="" data-set-theme="aqua">Aqua</button></li>
+                            
+                            <li><button class="" data-set-theme="lofi">Lofi</button></li>
+                            
+                            <li><button class="" data-set-theme="pastel">Pastel</button></li>
+                            
+                            <li><button class="" data-set-theme="fantasy">Fantasy</button></li>
+                            
+                            <li><button class="" data-set-theme="wireframe">Wireframe</button></li>
+                            
+                            <li><button class="" data-set-theme="black">Black</button></li>
+                            
+                            <li><button class="" data-set-theme="luxury">Luxury</button></li>
+                            
+                            <li><button class="" data-set-theme="dracula">Dracula</button></li>
+                            
+                            <li><button class="" data-set-theme="cmyk">CMYK</button></li>
+                            
+                            <li><button class="" data-set-theme="autumn">Autumn</button></li>
+                            
+                            <li><button class="" data-set-theme="business">Business</button></li>
+                            
+                            <li><button class="" data-set-theme="acid">Acid</button></li>
+                            
+                            <li><button class="" data-set-theme="lemonade">Lemonade</button></li>
+                            
+                            <li><button class="" data-set-theme="night">Night</button></li>
+                            
+                            <li><button class="" data-set-theme="coffee">Coffee</button></li>
+                            
+                            <li><button class="" data-set-theme="winter">Winter</button></li>
+                            
+                            <li><button class="" data-set-theme="dim">Dim</button></li>
+                            
+                            <li><button class="" data-set-theme="nord">Nord</button></li>
+                            
+                            <li><button class="" data-set-theme="sunset">Sunset</button></li>
+                            
+                            <li><button class="" data-set-theme="caramellatte">Caramellatte</button></li>
+                            
+                            <li><button class="" data-set-theme="abyss">Abyss</button></li>
+                            
+                            <li><button class="" data-set-theme="silk">Silk</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
+    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
+    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
+    
+    
+</body>
