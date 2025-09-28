@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ru">
     <title>Rust и IoT Блог - rust</title>
-    <subtitle>Создадим безопасный IoT мир вместе с Rust.</subtitle>
+    <subtitle>Create wonderull secure IoT world with Rust.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://anakenralf.github.io/rust-iot-blog/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
