@@ -14,6 +14,10 @@
         <lastmod>2025-09-23</lastmod>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/blog/esp32-uart-controlled-led-20250927/</loc>
+        <lastmod>2025-09-28</lastmod>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/first-post-20250915/</loc>
         <lastmod>2025-09-16</lastmod>
     </url>
@@ -77,6 +81,12 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/esp32/page/2/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/led/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/led/page/1/</loc>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/rust/</loc>
     </url>
     <url>
@@ -90,5 +100,11 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/simple/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/uart/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/uart/page/1/</loc>
     </url>
 </urlset>

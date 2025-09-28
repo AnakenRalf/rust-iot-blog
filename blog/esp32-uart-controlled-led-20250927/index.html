@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <title>ESP32 + Rust: Interactive Project with UART-Controlled LED | Rust and baremetal IoT</title>
+
+    <!-- meta data -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IoT">
+    <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
+
+    <!-- stylesheets, fonts, feeds -->
+    <link rel="stylesheet" href="/rust-iot-blog/css/main.css?DMdNbU" >
+    
+
+    <!-- favicon -->
+    
+
+    <!-- java script for setting theme as saved in local storage (needs to be inline to avoid flicker) -->
+    <script>
+        let default_theme = 'light';
+
+
+default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+
+
+        // try to get theme from local storage and set it (or the default theme) to the HTML element
+        const theme = localStorage.getItem('theme') || default_theme;
+        document.documentElement.setAttribute("data-theme", theme);
+
+        // execute code after the DOM content was loaded
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // select theme at the theme selector (if it is present in the HTML code)
+            var btnEl = document.querySelector("[data-set-theme='" + theme.toString() + "']");
+            if (btnEl) {
+                btnEl.classList.add("btn-active")
+                btnEl.classList.add("btn-primary")
+            }
+        })
+    </script>
+</head>
+
+<body class="h-screen">
+    
+    <div class="@container drawer min-h-full">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle lg:hidden">
+        <div class="drawer-content flex min-h-full flex-col"><!-- to expand over the full screen even on short pages -->
+            <!-- navbar -->
+            <div class="fixed inset-x-0 top-0 z-10 text-primary-content bg-primary shadow-sm opacity-93">
+                <div class="flex flex-col items-center justify-between">
+                    <div class="navbar">
+                        <div class="navbar-start">
+                            <a
+                                class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
+                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
+                        </div>
+                        <div class="navbar-center max-lg:hidden lg:flex">
+                            <ul class="menu menu-horizontal px-1 gap-x-2">
+                                
+                                        <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Posts</span>
+</a>
+
+</li>
+                                    
+                                        <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Tags</span>
+</a>
+
+</li>
+                                    
+                                
+                            </ul>
+                        </div>
+                        <div class="navbar-end">
+                            
+                                
+                    <div class="dropdown dropdown-end max-lg:hidden">
+                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
+                            <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cupcake">Cupcake</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="bumblebee">Bumblebee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="emerald">Emerald</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="corporate">Corporate</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="synthwave">Synthwave</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="retro">Retro</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="valentine">Valentine</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="halloween">Halloween</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="garden">Garden</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="forest">Forest</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="aqua">Aqua</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lofi">Lofi</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="pastel">Pastel</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="fantasy">Fantasy</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="wireframe">Wireframe</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="black">Black</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="luxury">Luxury</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dracula">Dracula</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cmyk">CMYK</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="autumn">Autumn</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="business">Business</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="acid">Acid</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lemonade">Lemonade</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="night">Night</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="coffee">Coffee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winter">Winter</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dim">Dim</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="nord">Nord</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="sunset">Sunset</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="caramellatte">Caramellatte</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="abyss">Abyss</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="silk">Silk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            </ul>
+                    </div>
+
+                            
+                            
+                            <div class="dropdown dropdown-end max-lg:hidden">
+                                <div tabindex="0"
+                                    title="Change Language"
+                                    role="button"
+                                    class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
+                                <ul tabindex="0"
+                                    class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
+                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
+    
+
+    
+        
+            
+        
+        
+            
+                
+            
+        
+    <a href="/rust-iot-blog/ru" class="btn btn-ghost w-full">Русский</a>
+</li>
+                                    
+                                </ul>
+                            </div>
+                            
+                            
+                            <div class="max-md:hidden">
+                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
+                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                                    <input id="desktop-search" type="search" class="search-input grow"
+                                        placeholder="Search">
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
+                                </label>
+                            </div>
+                            <label id="search-button" for="search-bar" aria-label="open search"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
+                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            </label>
+                            
+                            
+                            <label for="main-drawer" aria-label="open sidebar"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary lg:hidden">
+                                <svg role="img" aria-label="List" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-6 w-6 swap-off [:checked~*_&amp;]:!-rotate-45 [:checked~*_&amp;]:!opacity-0" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" /></svg>
+                                <svg role="img" aria-label="X" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-5 w-5 swap-on [:checked~*_&amp;]:!rotate-0 [:checked~*_&amp;]:!opacity-100" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" /></svg>
+                            </label>
+                            </div>
+                    </div>
+                    <div id="search-bar" class="hidden md:hidden pl-2 pr-2 pb-2 w-full">
+                        <label tabindex="0" class="input text-primary bg-primary-content w-full">
+                            <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            <input id="mobile-search" type="search" class="search-input grow"
+                                placeholder="Search">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+
+            <!-- content -->
+            <div class="grid min-h-dvh grid-rows-[1fr_1px_auto_1px_auto] grid-cols-1
+                            ">
+
+                <!-- sidebar -->
+                <div
+                    class="relative col-start-1 row-span-full row-start-1 hidden max-lg:hidden bg-base-200">
+                    <div class="absolute inset-0">
+                        <div
+                            class="sticky top-16 pt-4 bottom-0 left-0 h-full max-h-[calc(100dvh-(var(--spacing)*16))] w-full overflow-y-auto px-6">
+                            <div>
+                                <nav class="flex flex-col gap-8">
+                                    
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main content -->
+                <main
+                    class="relative row-start-1 grid grid-cols-subgrid  m-4">
+                    <div
+                        class="isolate grid max-w-2xl grid-cols-1 gap-10 mt-14 md:pt-6 md:pb-24 xl:max-w-4xl mx-auto">
+                        <!-- search results shown between header and content -->
+                        <div tabindex="0"
+                            class="search-results dropdown-content hidden bg-base-200 text-base-content rounded-box z-1 p-2 shadow-2xl list-none max-w-4xl flex-row lg:absolute lg:right-0 lg:mr-4 max-md:mt-10">
+                            <div class="search-results__items"></div>
+                        </div>
+
+                        <div class="pb-8">
+                            
+
+
+<div class="breadcrumbs text-sm">
+    <ul>
+        <li><a href="/rust-iot-blog/">Home</a></li>
+        
+        
+        
+        
+        
+        
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
+        
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;esp32-uart-controlled-led-20250927&#x2F;">ESP32 + Rust: Interactive Project with UART-Controlled LED</a></li>
+    </ul>
+</div>
+
+
+<h1>ESP32 + Rust: Interactive Project with UART-Controlled LED</h1>
+
+
+<div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" /></svg>
+        <span class=""><time datetime="2025-09-28">28-Sep-2025</time></span>
+    </span>
+    
+
+    
+
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
+        <span class="ml-1">1123 words</span>
+    </span>
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
+        <span class="ml-1">6
+            minutes
+        </span>
+    </span>
+    
+
+    
+    
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/esp32/" class="no-underline hover:underline">esp32</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/rust/" class="no-underline hover:underline">rust</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/simple/" class="no-underline hover:underline">simple</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/uart/" class="no-underline hover:underline">uart</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/led/" class="no-underline hover:underline">led</a>
+    </span>
+    
+    
+    
+</div>
+
+
+<h2 id="introduction">Introduction</h2>
+<p>In my <a href="https://anakenralf.github.io/rust-iot-blog/blog/esp32-blink-20250919/">previous article</a>, we explored the "Hello, World!" of embedded programming: a blinking LED on the ESP32 using Rust. That project was all about setting up the development environment and running simple code. Now, let’s take it up a notch by making the ESP32 <strong>interactive</strong>. Instead of passively blinking, we’ll enable the ESP32 to respond to commands sent from a computer via USB serial (UART). This project introduces real-time interaction, laying the foundation for more complex Internet of Things (IoT) applications.</p>
+<p>Let’s dive into creating an interactive UART-controlled LED project with Rust on the ESP32!</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting, ensure you have the following from <a href="https://anakenralf.github.io/rust-iot-blog/blog/esp32-blink-20250919/">previous article</a>:</p>
+<ul>
+<li>
+<p><strong>Hardware</strong>:</p>
+<ul>
+<li>An <strong>ESP32</strong> development board (e.g., ESP32-DevKitC).</li>
+<li>An <strong>LED</strong> connected to GPIO5 with a current-limiting resistor (e.g., 220–330 ohms to ground).</li>
+<li>A USB cable for serial communication and power.</li>
+</ul>
+</li>
+<li>
+<p><strong>Software</strong>:</p>
+<ul>
+<li><strong>Rust</strong> installed with the <code>esp-idf</code> toolchain configured. Refer to the <a href="https://www.patreon.com/posts/rust-esp32-get-139170844?utm_medium=clipboard_copy&amp;utm_source=copyLink&amp;utm_campaign=postshare_creator&amp;utm_content=join_link">[step-by-step guide on Patreon]</a> if you haven’t set this up yet.</li>
+<li>A <strong>serial terminal</strong> program.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="project-plan">Project Plan</h2>
+<p>Here’s the high-level plan for our interactive project:</p>
+<ol>
+<li><strong>Initialize UART</strong>: Configure the ESP32’s UART0 peripheral for serial communication.</li>
+<li><strong>Read Input</strong>: Capture data sent from a serial terminal.</li>
+<li><strong>Parse Commands</strong>: Interpret the received data as commands to control the LED.</li>
+<li><strong>Perform Actions</strong>: Turn the LED on/off or report its status based on the command.</li>
+<li><strong>Provide Feedback</strong>: Echo commands and send debug information (e.g., raw hex data) back to the terminal.</li>
+</ol>
+<hr />
+<h2 id="features-implemented">Features Implemented</h2>
+<p>This project implements the following features:</p>
+<ol>
+<li>
+<p><strong>Interactive Commands via UART</strong>:</p>
+<ul>
+<li><code>1</code>: Turn the LED <strong>on</strong>.</li>
+<li><code>0</code>: Turn the LED <strong>off</strong>.</li>
+<li><code>5</code>: Report the LED’s current state (<code>ON</code> or <code>OFF</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Robust UART Handling</strong>:</p>
+<ul>
+<li>A fixed-size input buffer with safety checks to prevent overflows.</li>
+<li>Conversion of raw input to UTF-8 strings with trimming of whitespace and newline characters.</li>
+<li>Debugging output in hexadecimal format to inspect raw received data.</li>
+</ul>
+</li>
+<li>
+<p><strong>User Feedback</strong>:</p>
+<ul>
+<li>Echoes every command received.</li>
+<li>Displays the raw input buffer, trimmed command, and action result.</li>
+<li>Sends error messages for invalid inputs or read errors.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="workflow">Workflow</h2>
+<p>The ESP32’s default UART0 pins (TX on GPIO1, RX on GPIO3) are already configured for USB serial communication in most development boards. We’ll leverage this setup to communicate with a computer. The LED is connected to GPIO5, and we’ll use Rust’s <code>esp_idf_hal</code> crate to control both the UART and GPIO peripherals.</p>
+<hr />
+<h2 id="code-breakdown">Code Breakdown</h2>
+<p>Below is a detailed explanation of the Rust program that powers this project.</p>
+<h3 id="1-setting-up-peripherals">1. Setting Up Peripherals</h3>
+<p>We use the <code>esp_idf_hal</code> crate to safely initialize the ESP32’s peripherals. The <code>Peripherals::take()</code> method ensures exclusive access to hardware resources.</p>
+<pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">peripherals<span class="z-punctuation z-accessor z-rust">::</span></span>Peripherals<span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> peripherals <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-keyword z-control z-rust">match</span> <span class="z-meta z-path z-rust">Peripherals<span class="z-punctuation z-accessor z-rust">::</span></span>take<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>p</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> p<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Err</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>e</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Failed to take peripherals: <span class="z-constant z-other z-placeholder z-rust">{:?}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> e<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-keyword z-control z-rust">return</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> pins <span class="z-keyword z-operator z-assignment z-rust">=</span> peripherals<span class="z-punctuation z-accessor z-dot z-rust">.</span>pins<span class="z-punctuation z-terminator z-rust">;</span>
+</span></code></pre>
+<p>This code retrieves the GPIO and UART peripherals for use in the program.</p>
+<h3 id="2-configuring-the-led">2. Configuring the LED</h3>
+<p>The LED is connected to GPIO5 and configured as an output pin using <code>PinDriver::output</code>. We initialize it to the <strong>low</strong> state (off).</p>
+<pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">gpio<span class="z-punctuation z-accessor z-rust">::</span></span>PinDriver<span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> led <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-keyword z-control z-rust">match</span> <span class="z-meta z-path z-rust">PinDriver<span class="z-punctuation z-accessor z-rust">::</span></span>output<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>pins<span class="z-punctuation z-accessor z-dot z-rust">.</span>gpio5</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>driver</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> driver<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Err</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>e</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Failed to configure LED on GPIO5: <span class="z-constant z-other z-placeholder z-rust">{:?}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> e<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-keyword z-control z-rust">return</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_low</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></code></pre>
+<h3 id="3-setting-up-uart">3. Setting Up UART</h3>
+<p>We configure UART0 for serial communication at a baud rate of 115200. The TX and RX pins are mapped to GPIO1 and GPIO3, respectively, which are the default USB serial pins on most ESP32 boards.</p>
+<pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">uart<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>UartConfig<span class="z-punctuation z-separator z-rust">,</span> UartDriver</span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">units<span class="z-punctuation z-accessor z-rust">::</span></span>Hertz<span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> config <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-path z-rust">UartConfig<span class="z-punctuation z-accessor z-rust">::</span></span>new<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">baudrate</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>Hertz<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">115_200</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> uart <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-keyword z-control z-rust">match</span> <span class="z-meta z-path z-rust">UartDriver<span class="z-punctuation z-accessor z-rust">::</span></span>new<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    peripherals<span class="z-punctuation z-accessor z-dot z-rust">.</span>uart0<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    pins<span class="z-punctuation z-accessor z-dot z-rust">.</span>gpio1<span class="z-punctuation z-separator z-rust">,</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> TX
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    pins<span class="z-punctuation z-accessor z-dot z-rust">.</span>gpio3<span class="z-punctuation z-separator z-rust">,</span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> RX
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    <span class="z-support z-type z-rust">Option</span><span class="z-punctuation z-separator z-rust">:</span><span class="z-punctuation z-separator z-rust">:</span><span class="z-meta z-generic z-rust"><span class="z-punctuation z-definition z-generic z-begin z-rust">&lt;</span><span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">gpio<span class="z-punctuation z-accessor z-rust">::</span></span>AnyIOPin<span class="z-punctuation z-definition z-generic z-end z-rust">&gt;</span></span><span class="z-meta z-path z-rust"><span class="z-punctuation z-accessor z-rust">::</span></span>None<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    <span class="z-support z-type z-rust">Option</span><span class="z-punctuation z-separator z-rust">:</span><span class="z-punctuation z-separator z-rust">:</span><span class="z-meta z-generic z-rust"><span class="z-punctuation z-definition z-generic z-begin z-rust">&lt;</span><span class="z-meta z-path z-rust">esp_idf_hal<span class="z-punctuation z-accessor z-rust">::</span></span><span class="z-meta z-path z-rust">gpio<span class="z-punctuation z-accessor z-rust">::</span></span>AnyIOPin<span class="z-punctuation z-definition z-generic z-end z-rust">&gt;</span></span><span class="z-meta z-path z-rust"><span class="z-punctuation z-accessor z-rust">::</span></span>None<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust">    <span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>config<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-group z-rust"></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>uart</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> uart<span class="z-punctuation z-separator z-rust">,</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-support z-type z-rust">Err</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>e</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Failed to configure UART: <span class="z-constant z-other z-placeholder z-rust">{:?}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> e<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-keyword z-control z-rust">return</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Send initial confirmation message
+</span></span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>ESP32 Ready<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></code></pre>
+<p>The initial <code>ESP32 Ready</code> message confirms that the UART is operational.</p>
+<h3 id="4-command-processing-loop">4. Command Processing Loop</h3>
+<p>The main loop reads serial input into a 64-byte buffer and processes it as UTF-8 commands. It supports the commands <code>1</code>, <code>0</code>, and <code>5</code>, and provides feedback for each action.</p>
+<pre data-lang="rust" class="language-rust z-code"><code class="language-rust" data-lang="rust"><span class="z-source z-rust"><span class="z-keyword z-other z-rust">use</span> <span class="z-meta z-path z-rust">core<span class="z-punctuation z-accessor z-rust">::</span></span>str<span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> buf <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-constant z-numeric z-integer z-decimal z-rust">0</span><span class="z-storage z-type z-numeric z-rust">u8</span><span class="z-punctuation z-separator z-rust">;</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">64</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span><span class="z-source z-rust"><span class="z-keyword z-control z-rust">loop</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust">    <span class="z-keyword z-control z-rust">match</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">read</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-keyword z-operator z-bitwise z-rust">&amp;</span><span class="z-storage z-modifier z-rust">mut</span> buf<span class="z-punctuation z-separator z-rust">,</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">1000</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>len</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-control z-rust">if</span> len <span class="z-keyword z-operator z-comparison z-rust">&gt;</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">0</span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Convert raw input to UTF-8
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-keyword z-control z-rust">match</span> <span class="z-storage z-type z-rust">str</span><span class="z-meta z-path z-rust"><span class="z-punctuation z-accessor z-rust">::</span></span>from_utf8<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-keyword z-operator z-range z-rust">..</span>len<span class="z-punctuation z-section z-group z-end z-rust">]</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>cmd</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-storage z-type z-rust">let</span> trimmed <span class="z-keyword z-operator z-assignment z-rust">=</span> cmd<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">trim_matches</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-meta z-function z-closure z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">|</span></span></span><span class="z-meta z-function z-closure z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-variable z-parameter z-rust">c</span><span class="z-punctuation z-section z-parameters z-end z-rust">|</span></span> </span><span class="z-meta z-function z-closure z-rust">c <span class="z-keyword z-operator z-comparison z-rust">==</span> <span class="z-string z-quoted z-single z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&#39;</span> <span class="z-punctuation z-definition z-string z-end z-rust">&#39;</span></span> <span class="z-keyword z-operator z-logical z-rust">||</span> c <span class="z-keyword z-operator z-comparison z-rust">==</span> <span class="z-string z-quoted z-single z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&#39;</span><span class="z-constant z-character z-escape z-rust">\r</span><span class="z-punctuation z-definition z-string z-end z-rust">&#39;</span></span> <span class="z-keyword z-operator z-logical z-rust">||</span> c <span class="z-keyword z-operator z-comparison z-rust">==</span> <span class="z-string z-quoted z-single z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&#39;</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&#39;</span></span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-keyword z-control z-rust">match</span> trimmed <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        <span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>1<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_high</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Command: ON, LED ON<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        <span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>0<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">set_low</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Command: OFF, LED OFF<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        <span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>5<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> state <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-keyword z-control z-rust">if</span> led<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">is_set_high</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                                <span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>ON<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span>
+</span></span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span> <span class="z-keyword z-control z-rust">else</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                                <span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>OFF<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span>
+</span></span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>state<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">as_bytes</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Unknown command<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Echo trimmed command for debugging
+</span></span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-storage z-type z-rust">let</span> response <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-support z-macro z-rust">format!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Trimmed command: <span class="z-constant z-other z-placeholder z-rust">{}</span><span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> trimmed<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>response<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">as_bytes</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                <span class="z-support z-type z-rust">Err</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>e</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Invalid UTF-8 input<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                    <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>UTF-8 error: <span class="z-constant z-other z-placeholder z-rust">{:?}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> e<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> Output raw buffer as hex for debugging
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> hex_buf <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-constant z-numeric z-integer z-decimal z-rust">0</span><span class="z-storage z-type z-numeric z-rust">u8</span><span class="z-punctuation z-separator z-rust">;</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">256</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-storage z-type z-rust">let</span> <span class="z-storage z-modifier z-rust">mut</span> pos <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">0</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-storage z-type z-rust">let</span> prefix <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Raw buffer: <span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span>pos<span class="z-keyword z-operator z-range z-rust">..</span>pos <span class="z-keyword z-operator z-arithmetic z-rust">+</span> prefix<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">len</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">copy_from_slice</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>prefix</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            pos <span class="z-keyword z-operator z-assignment z-rust">+=</span> prefix<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">len</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-keyword z-control z-rust">for</span> <span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>byte <span class="z-keyword z-operator z-rust">in</span> <span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-keyword z-operator z-range z-rust">..</span>len<span class="z-punctuation z-section z-group z-end z-rust">]</span></span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                <span class="z-storage z-type z-rust">let</span> hex <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>0123456789abcdef<span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span>pos<span class="z-punctuation z-section z-group z-end z-rust">]</span></span> <span class="z-keyword z-operator z-assignment z-rust">=</span> hex<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>byte <span class="z-keyword z-operator z-comparison z-rust">&gt;</span><span class="z-keyword z-operator z-comparison z-rust">&gt;</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">4</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">as</span> <span class="z-storage z-type z-rust">usize</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span>pos <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">1</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span> <span class="z-keyword z-operator z-assignment z-rust">=</span> hex<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>byte <span class="z-keyword z-operator z-bitwise z-rust">&amp;</span> <span class="z-constant z-numeric z-integer z-hexadecimal z-rust">0xF</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">as</span> <span class="z-storage z-type z-rust">usize</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span>pos <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">2</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span> <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-string z-quoted z-single z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&#39;</span> <span class="z-punctuation z-definition z-string z-end z-rust">&#39;</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">                pos <span class="z-keyword z-operator z-assignment z-rust">+=</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">3</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span>pos<span class="z-keyword z-operator z-range z-rust">..</span>pos <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">2</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">copy_from_slice</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span><span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-keyword z-operator z-bitwise z-rust">&amp;</span>hex_buf<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">[</span><span class="z-keyword z-operator z-range z-rust">..</span>pos <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">2</span><span class="z-punctuation z-section z-group z-end z-rust">]</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-type z-rust">Ok</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-keyword z-operator z-rust">_</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span> <span class="z-comment z-line z-double-slash z-rust"><span class="z-punctuation z-definition z-comment z-rust">//</span> No data received
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        <span class="z-support z-type z-rust">Err</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>e</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-rust">=&gt;</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-storage z-type z-rust">let</span> <span class="z-keyword z-operator z-rust">_</span> <span class="z-keyword z-operator z-assignment z-rust">=</span> uart<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">write</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-string z-quoted z-double z-rust"><span class="z-storage z-type z-string z-rust">b</span><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Read error<span class="z-constant z-character z-escape z-rust">\r</span><span class="z-constant z-character z-escape z-rust">\n</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">            <span class="z-support z-macro z-rust">println!</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-string z-quoted z-double z-rust"><span class="z-punctuation z-definition z-string z-begin z-rust">&quot;</span>Read error: <span class="z-constant z-other z-placeholder z-rust">{:?}</span><span class="z-punctuation z-definition z-string z-end z-rust">&quot;</span></span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-separator z-rust">,</span> e<span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">        </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"><span class="z-meta z-block z-rust">    </span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></span><span class="z-source z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span>
+</span></code></pre>
+<p>Full code you can find in my GitHub: https://github.com/AnakenRalf/esp32-comport-simple-communication</p>
+<h3 id="5-debugging-with-hex-output">5. Debugging with Hex Output</h3>
+<p>To aid debugging, the program converts the raw input buffer to a hexadecimal string and sends it back over UART. This allows you to inspect the exact bytes received, which is especially useful for diagnosing issues with serial communication.</p>
+<hr />
+<h2 id="serial-terminal-implementation">Serial Terminal Implementation</h2>
+<p>There are many serial terminal programs available, such as PuTTY (Windows), minicom, or picocom (Linux/macOS). However, each has its own quirks, and unexpected data (e.g., extra newlines or control characters) can cause the ESP32 to report errors like <code>Invalid UTF-8 input</code> or <code>Read error</code>. To simplify communication for this educational project, we provide a custom Python serial terminal script that sends exactly the expected commands.</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">serial</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Adjust &#39;COM3&#39; to your port, e.g., &#39;/dev/ttyUSB0&#39; on Linux
+</span></span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">COMPORT</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">COM3<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Configure serial port 
+</span></span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">serial</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Serial</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">port</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">COMPORT</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">baudrate</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-constant z-numeric z-integer z-decimal z-python">115200</span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">parity</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">serial</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">PARITY_NONE</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">stopbits</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">serial</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">STOPBITS_ONE</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">bytesize</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">serial</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">EIGHTBITS</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">timeout</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-constant z-numeric z-float z-decimal z-python">0<span class="z-punctuation z-separator z-decimal z-python">.</span>2</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-statement z-exception z-try z-python"><span class="z-keyword z-control z-exception z-try z-python">try</span><span class="z-punctuation z-section z-block z-exception z-try z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">Connected to </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">COMPORT</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python">.<span class="z-constant z-character z-escape z-python">\n</span>Available commands:<span class="z-constant z-character z-escape z-python">\n</span>  &#39;1&#39; → Turn LED ON<span class="z-constant z-character z-escape z-python">\n</span>  &#39;0&#39; → Turn LED OFF<span class="z-constant z-character z-escape z-python">\n</span>  &#39;5&#39; → Check LED status<span class="z-constant z-character z-escape z-python">\n</span>  &#39;exit&#39; → Close serial port<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Press Enter to send. Responses from ESP32 will be displayed.<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    
+</span><span class="z-source z-python">    <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Clear initial buffer and read boot messages
+</span></span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">sleep</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-constant z-numeric z-integer z-decimal z-python">1</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">in_waiting</span></span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">readline</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">decode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">utf-8<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">errors</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">ignore<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">strip</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-constant z-language z-python">True</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">command</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">input</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">&gt; <span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">command</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">exit<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-keyword z-control z-flow z-break z-python">break</span>
+</span><span class="z-source z-python">        <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Send command with \r\n
+</span></span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">write</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">command</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-constant z-character z-escape z-python">\r</span><span class="z-constant z-character z-escape z-python">\n</span><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">encode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">utf-8<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">flush</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Read responses for up to 0.5s
+</span></span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">start_time</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">time</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">time</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span> <span class="z-keyword z-operator z-arithmetic z-python">-</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">start_time</span></span> <span class="z-keyword z-operator z-comparison z-python">&lt;</span> <span class="z-constant z-numeric z-float z-decimal z-python">0<span class="z-punctuation z-separator z-decimal z-python">.</span>5</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">in_waiting</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">                <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">readline</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">decode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">utf-8<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">errors</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">ignore<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">strip</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">                <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">                    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">ESP32: </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-exception z-catch z-python"><span class="z-keyword z-control z-exception z-catch z-python">except</span> <span class="z-support z-type z-exception z-python">KeyboardInterrupt</span><span class="z-punctuation z-section z-block z-exception z-catch z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-constant z-character z-escape z-python">\n</span>Exiting...<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-exception z-finally z-python"><span class="z-keyword z-control z-exception z-finally z-python">finally</span><span class="z-punctuation z-section z-block z-exception z-finally z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">close</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Serial port closed.<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>This script:</p>
+<ul>
+<li>Connects to the ESP32 via the specified COM port (adjust <code>COM3</code> to match your system).</li>
+<li>Sends commands with proper newline termination (<code>\r\n</code>).</li>
+<li>Displays responses from the ESP32, including raw hex output and command feedback.</li>
+<li>Closes the serial port cleanly when you type <code>exit</code> or interrupt the program.</li>
+</ul>
+<p>Using this script ensures reliable communication, but as you gain experience, you can extend the ESP32’s command parser to handle more complex inputs (e.g., accumulating data until a newline is received).</p>
+<hr />
+<h2 id="how-to-use">How to Use</h2>
+<p>Follow these steps to set up and run the project:</p>
+<ol>
+<li>
+<p><strong>Connect the Hardware</strong>:</p>
+<ul>
+<li>Wire an LED to GPIO5 with a current-limiting resistor (e.g., 220–330 ohms) to ground.</li>
+<li>Connect the ESP32 to your computer via a USB cable.</li>
+</ul>
+</li>
+<li>
+<p><strong>Build and Flash</strong>:</p>
+<ul>
+<li>Use the <code>esp-idf</code> toolchain to compile the Rust code to your ESP32. Run:<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">cargo</span></span><span class="z-meta z-function-call z-arguments z-shell"> build<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>release</span>     </span>
+</span></code></pre>
+</li>
+<li>Flash binary files to controller</li>
+</ul>
+</li>
+<li>
+<p><strong>Run the Python Serial Terminal</strong>:</p>
+<ul>
+<li>Save the Python script above as <code>serial_terminal.py</code>.</li>
+<li>Install the <code>pyserial</code> library: <code>pip install pyserial</code>.</li>
+<li>Run the script: <code>python serial_terminal.py</code>.</li>
+<li>Adjust the COM port in the script if necessary (e.g., <code>/dev/ttyUSB0</code> on Linux).</li>
+</ul>
+</li>
+<li>
+<p><strong>Send Commands</strong>:</p>
+<ul>
+<li>Type <code>1</code> and press Enter to turn the LED on.</li>
+<li>Type <code>0</code> and press Enter to turn the LED off.</li>
+<li>Type <code>5</code> and press Enter to check the LED’s state.</li>
+<li>Type <code>exit</code> to close the serial terminal.</li>
+</ul>
+</li>
+<li>
+<p><strong>Observe Feedback</strong>:</p>
+<ul>
+<li>The ESP32 responds with:
+<ul>
+<li>The raw input buffer in hexadecimal.</li>
+<li>The trimmed command.</li>
+<li>The result of the command (e.g., <code>Command: ON, LED ON</code> or <code>Unknown command</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="demo">Demo</h2>
+<p>You can see actions in YouTube short video:</p>
+<hr />
+<h2 id="why-this-step-is-important">Why This Step Is Important</h2>
+<p>This project marks a significant milestone in your Rust + ESP32 journey:</p>
+<ul>
+<li><strong>Interactivity</strong>: The ESP32 is no longer just executing pre-programmed code—it’s responding to real-time user input.</li>
+<li><strong>Foundation for IoT</strong>: UART communication is a building block for more advanced features, such as Wi-Fi configuration, sensor data reporting, or remote control.</li>
+<li><strong>Debugging Skills</strong>: By including raw hex output and error handling, you’re learning how to diagnose issues in embedded systems.</li>
+<li><strong>Scalability</strong>: The command-processing loop can be extended to support additional commands, such as PWM for LED brightness or Wi-Fi setup for network connectivity.</li>
+</ul>
+<p>This project bridges the gap between a simple “Hello, World” and a true interactive embedded application.</p>
+<h2 id="adv">ADV</h2>
+<p>Become <a href="https://www.patreon.com/cw/anakenr">Patreon</a> for support Me.</p>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </main>
+
+                <!-- footer -->
+                <div class="row-start-3 ">
+                    
+
+                    
+                    <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded pt-6 gap-0">
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+                            <a class="link link-hover"
+                                href="/rust-iot-blog/about">About</a>
+                            
+                        </nav>
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+
+
+<a href="https:&#x2F;&#x2F;github.com&#x2F;AnakenRalf" title="GitHub" target="_blank"><svg role="img" aria-label="Github" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg></a>
+
+
+
+
+
+
+
+<a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;@Rust-IoT" title="YouTube" target="_blank"><svg role="img" aria-label="Youtube" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z" /></svg></a>
+
+
+
+<a href="https:&#x2F;&#x2F;t.me&#x2F;RustIoT" title="Telegram" target="_blank"><svg role="img" aria-label="Telegram" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09" /></svg></a>
+
+
+
+
+                            
+                        </nav>
+                        
+                        <aside>
+                            <p>© 2025 <a href="https://arlinksqa.web.app/contact">Ruslan Ausiannikau</a><br>Powered by <a href="https://getzola.org">Zola</a>, <a href="https://tailwindcss.com">TailwindCSS</a> & <a href="https://daisyui.com">DaisyUI</a></p>
+                        </aside>
+                        
+                    </footer>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-side z-60">
+            <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <ul class="menu menu-lg bg-base-200 min-h-full w-80 p-4">
+                
+                
+                <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
+        Posts
+</a>
+
+</li>
+                
+                <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="link no-underline ">
+        Tags
+</a>
+
+</li>
+                
+                
+                <hr class="mt-2 mb-2">
+                
+                <li>
+                    <details>
+                        <summary class="">Language
+                        </summary>
+                        <ul>
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;esp32-uart-controlled-led-20250927&#x2F;"
+                                    class="no-underline menu-active">English</a></li><li>
+    
+
+    
+        
+            
+        
+        
+            
+                
+            
+        
+    <a href="/rust-iot-blog/ru" class="no-underline">Русский</a>
+</li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+                
+                <li>
+                    <details>
+                        <summary class="">Theme</summary>
+                        <ul>
+                            
+                            <li><button class="" data-set-theme="light">Light</button></li>
+                            
+                            <li><button class="" data-set-theme="dark">Dark</button></li>
+                            
+                            <li><button class="" data-set-theme="cupcake">Cupcake</button></li>
+                            
+                            <li><button class="" data-set-theme="bumblebee">Bumblebee</button></li>
+                            
+                            <li><button class="" data-set-theme="emerald">Emerald</button></li>
+                            
+                            <li><button class="" data-set-theme="corporate">Corporate</button></li>
+                            
+                            <li><button class="" data-set-theme="synthwave">Synthwave</button></li>
+                            
+                            <li><button class="" data-set-theme="retro">Retro</button></li>
+                            
+                            <li><button class="" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            
+                            <li><button class="" data-set-theme="valentine">Valentine</button></li>
+                            
+                            <li><button class="" data-set-theme="halloween">Halloween</button></li>
+                            
+                            <li><button class="" data-set-theme="garden">Garden</button></li>
+                            
+                            <li><button class="" data-set-theme="forest">Forest</button></li>
+                            
+                            <li><button class="" data-set-theme="aqua">Aqua</button></li>
+                            
+                            <li><button class="" data-set-theme="lofi">Lofi</button></li>
+                            
+                            <li><button class="" data-set-theme="pastel">Pastel</button></li>
+                            
+                            <li><button class="" data-set-theme="fantasy">Fantasy</button></li>
+                            
+                            <li><button class="" data-set-theme="wireframe">Wireframe</button></li>
+                            
+                            <li><button class="" data-set-theme="black">Black</button></li>
+                            
+                            <li><button class="" data-set-theme="luxury">Luxury</button></li>
+                            
+                            <li><button class="" data-set-theme="dracula">Dracula</button></li>
+                            
+                            <li><button class="" data-set-theme="cmyk">CMYK</button></li>
+                            
+                            <li><button class="" data-set-theme="autumn">Autumn</button></li>
+                            
+                            <li><button class="" data-set-theme="business">Business</button></li>
+                            
+                            <li><button class="" data-set-theme="acid">Acid</button></li>
+                            
+                            <li><button class="" data-set-theme="lemonade">Lemonade</button></li>
+                            
+                            <li><button class="" data-set-theme="night">Night</button></li>
+                            
+                            <li><button class="" data-set-theme="coffee">Coffee</button></li>
+                            
+                            <li><button class="" data-set-theme="winter">Winter</button></li>
+                            
+                            <li><button class="" data-set-theme="dim">Dim</button></li>
+                            
+                            <li><button class="" data-set-theme="nord">Nord</button></li>
+                            
+                            <li><button class="" data-set-theme="sunset">Sunset</button></li>
+                            
+                            <li><button class="" data-set-theme="caramellatte">Caramellatte</button></li>
+                            
+                            <li><button class="" data-set-theme="abyss">Abyss</button></li>
+                            
+                            <li><button class="" data-set-theme="silk">Silk</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
+    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
+    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
+    
+    
+</body>
