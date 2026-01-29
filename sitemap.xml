@@ -10,6 +10,10 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-and-security-p1/</loc>
+        <lastmod>2026-01-29</lastmod>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/esp32-blink-20250919/</loc>
         <lastmod>2025-09-23</lastmod>
     </url>
@@ -29,12 +33,6 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/page/1/</loc>
     </url>
     <url>
-        <loc>https://anakenralf.github.io/rust-iot-blog/blog/page/2/</loc>
-    </url>
-    <url>
-        <loc>https://anakenralf.github.io/rust-iot-blog/blog/page/3/</loc>
-    </url>
-    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/second-post-20250916/</loc>
         <lastmod>2025-09-17</lastmod>
     </url>
@@ -46,6 +44,10 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-and-security-p1/</loc>
+        <lastmod>2026-01-29</lastmod>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/first-post-20250915/</loc>
@@ -61,10 +63,28 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/ai/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/ai/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/digitaltwins/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/digitaltwins/page/1/</loc>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/esp32/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/esp32/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/iot/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/iot/page/1/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/</loc>
@@ -73,16 +93,34 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/page/1/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/security/page/1/</loc>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/something/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/ai/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/ai/page/1/</loc>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/cli/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/cli/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/digitaltwins/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/digitaltwins/page/1/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/esp32/</loc>
@@ -119,6 +157,12 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/rust/page/3/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/security/page/1/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/simple/</loc>
