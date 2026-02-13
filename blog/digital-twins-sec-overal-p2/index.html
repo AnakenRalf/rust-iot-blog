@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="ru" data-theme="light">
+<html lang="en" data-theme="light">
 
 <head>
-    <title>Цифровые двойники и угрозы | Rust и IoT Блог</title>
+    <title>Digital Twins and AI: Security Threat Landscape Through the Smart Home Example | Rust and baremetal IoT</title>
 
     <!-- meta data -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Create wonderull secure IoT world with Rust.">
+    <meta name="description" content="IoT">
     <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
 
     <!-- stylesheets, fonts, feeds -->
@@ -55,7 +55,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <div class="navbar-start">
                             <a
                                 class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
-                                href="/rust-iot-blog/ru">Rust и IoT Блог</a>
+                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
                         </div>
                         <div class="navbar-center max-lg:hidden lg:flex">
                             <ul class="menu menu-horizontal px-1 gap-x-2">
@@ -70,8 +70,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/ru&#x2F;blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
-        <span class="">Посты</span>
+<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Posts</span>
 </a>
 
 </li>
@@ -85,8 +85,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/ru&#x2F;tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
-        <span class="">Тэги</span>
+<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Tags</span>
 </a>
 
 </li>
@@ -98,7 +98,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                                 
                     <div class="dropdown dropdown-end max-lg:hidden">
-                        <div title="Farbpalette" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
                         <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
                             <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
                             <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
@@ -144,29 +144,43 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                             
                             <div class="dropdown dropdown-end max-lg:hidden">
                                 <div tabindex="0"
-                                    title="Сменить язык"
+                                    title="Change Language"
                                     role="button"
                                     class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
                                 <ul tabindex="0"
                                     class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
-                                    <li><button class="btn btn-active btn-primary w-full">Русский</button></li><li>
+                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
     
 
     
         
             
-        
-            
                 
             
         
+            
         
-    <a href="https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-and-security-p1/" class="btn btn-ghost w-full">English</a>
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-sec-overal-p2/" class="btn btn-ghost w-full">Русский</a>
 </li>
                                     
                                 </ul>
                             </div>
                             
+                            
+                            <div class="max-md:hidden">
+                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
+                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                                    <input id="desktop-search" type="search" class="search-input grow"
+                                        placeholder="Search">
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
+                                </label>
+                            </div>
+                            <label id="search-button" for="search-bar" aria-label="open search"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
+                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            </label>
                             
                             
                             <label for="main-drawer" aria-label="open sidebar"
@@ -180,7 +194,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <label tabindex="0" class="input text-primary bg-primary-content w-full">
                             <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
                             <input id="mobile-search" type="search" class="search-input grow"
-                                placeholder="Поиск">
+                                placeholder="Search">
                         </label>
                     </div>
                 </div>
@@ -225,28 +239,28 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 <div class="breadcrumbs text-sm">
     <ul>
-        <li><a href="/rust-iot-blog/ru">Home</a></li>
+        <li><a href="/rust-iot-blog/">Home</a></li>
         
         
         
         
         
         
-        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;">Посты</a></li>
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
         
-        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;digital-twins-and-security-p1&#x2F;">Цифровые двойники и угрозы</a></li>
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;digital-twins-sec-overal-p2&#x2F;">Digital Twins and AI: Security Threat Landscape Through the Smart Home Example</a></li>
     </ul>
 </div>
 
 
-<h1>Цифровые двойники и угрозы</h1>
+<h1>Digital Twins and AI: Security Threat Landscape Through the Smart Home Example</h1>
 
 
 <div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" clipPathUnits="objectBoundingBox"/></svg>
-        <span class=""><time datetime="2026-01-29">29. января 2026</time></span>
+        <span class=""><time datetime="2026-02-14">14-Feb-2026</time></span>
     </span>
     
 
@@ -256,12 +270,12 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
-        <span class="ml-1">1151 Слова</span>
+        <span class="ml-1">1923 words</span>
     </span>
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
-        <span class="ml-1">6
-            Минуты
+        <span class="ml-1">10
+            minutes
         </span>
     </span>
     
@@ -272,22 +286,22 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/ai/" class="no-underline hover:underline">AI</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/ai/" class="no-underline hover:underline">AI</a>
     </span>
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/digitaltwins/" class="no-underline hover:underline">DigitalTwins</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/digitaltwins/" class="no-underline hover:underline">DigitalTwins</a>
     </span>
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/security/" class="no-underline hover:underline">Security</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/security/" class="no-underline hover:underline">Security</a>
     </span>
     
     <span class="flex items-center whitespace-nowrap">
         <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
-        <a href="https://anakenralf.github.io/rust-iot-blog/ru/tags/iot/" class="no-underline hover:underline">iot</a>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/iot/" class="no-underline hover:underline">iot</a>
     </span>
     
     
@@ -295,143 +309,378 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 </div>
 
 
-<h2 id="wrench-introduction">🔧 Introduction</h2>
-<p>Развитие современных технологий все ближе подводит нас к тотальной цифровизации реального мира. То, что еще относительно недавно представляло собой дорогостоящий эксперимент — доступный главным образом государствам, крупным корпорациям или научным лабораториям с грантовым финансированием, — сегодня постепенно становится доступным небольшим командам, стартапам и даже отдельным энтузиастам.</p>
-<p>Термин <strong>Digital Twin</strong> существует уже не первый десяток лет. Однако именно сейчас, в 2026 году, можно уверенно утверждать: цифровые двойники перестали быть экзотикой. Это больше не исключительно индустриальный инструмент уровня <em>enterprise-only</em>. Да, путь к полноценному цифровому двойнику по‑прежнему сложен — он требует инженерных знаний, данных, инфраструктуры и организационной дисциплины. Тем не менее, это уже <strong>реалистичная и воспроизводимая инженерная задача</strong>, а не академическая абстракция.</p>
-<p>Ключевую роль в этом переходе сыграл <strong>искусственный интеллект</strong>. AI превратил цифровые двойники из статичных или полу‑динамичных моделей в системы, способные анализировать текущее состояние, выявлять скрытые закономерности, прогнозировать поведение и — в ряде случаев — принимать управленческие решения. Без AI современный Digital Twin довольно быстро упирается в предел собственной полезности.</p>
-<p>На этом фоне <strong>компьютерная безопасность</strong> часто остается в тени. При обсуждении Digital Twins и AI она нередко воспринимается как второстепенная или отложенная задача. Это опасное заблуждение. Любая система, которая получает данные из реального мира, управляет процессами и влияет на принятие решений, неизбежно становится объектом интереса — как для исследователей, так и для злоумышленников.</p>
-<p>Поэтому обойти тему безопасности в данном контексте невозможно. Не потому что «так принято», а потому что <strong>безопасность становится неотъемлемым свойством архитектуры цифровых двойников</strong>, а не внешним защитным слоем.</p>
-<p>В этой статье мы рассмотрим, где сходятся <strong>Digital Twins, AI и Computer Security</strong>, и какие новые возможности — а также риски — возникают на этом пересечении.</p>
+<p>In the previous article, I discussed Digital Twins, AI, and security from a high-level perspective: why these domains have merged into a single engineering reality, and why security is no longer an “extra layer”, but a property of system architecture itself.</p>
+<p><strong><a href="https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-and-security-p1/">READ p.1</a></strong>.</p>
+<p>In this article, I want to take the next step: move from theory to a practical and familiar example.</p>
+<p>A <strong>smart home</strong> is one of the most accessible forms of a digital twin.
+And because it’s so common and affordable, it’s also the perfect example of how AI dramatically expands the attack surface — not just for corporations, but for everyday users.</p>
 <hr />
-<h2 id="zachem-voobshche-sviazyvat-digital-twins-ai-i-bezopasnost">Зачем вообще связывать Digital Twins, AI и безопасность?</h2>
-<p>Еще 5–7 лет назад эти понятия существовали практически в разных профессиональных вселенных.</p>
-<p><strong>Digital Twins</strong> ассоциировались преимущественно с промышленностью, инженерией, CAD‑системами и физическими симуляциями. <strong>AI / ML</strong> развивались в рамках data science, рекомендательных систем и компьютерного зрения. <strong>Computer Security</strong> жила своей отдельной жизнью — в SOC, pentest‑командах, анализе вредоносного ПО и защите IT‑инфраструктуры.</p>
-<p>К 2024–2026 году ситуация радикально изменилась. Эти области не просто пересеклись — они начали <strong>усиливать и определять друг друга</strong>.</p>
-<p>Сегодня становится очевидно:</p>
+<h1 id="1-smart-home-as-a-consumer-digital-twin">1. Smart Home as a Consumer Digital Twin</h1>
+<p>A modern smart home is no longer just “a Wi-Fi light bulb and a mobile app”.</p>
+<p>It is slowly evolving into a <strong>digital twin of the environment and its occupants</strong>:</p>
 <ul>
-<li>Digital Twin без AI — это, по сути, дорогая и ограниченно полезная 3D‑модель;</li>
-<li>AI без security — это уязвимый агент с потенциально высоким уровнем ущерба;</li>
-<li>Security без цифровых двойников — это реакция на инциденты, а не их упреждение.</li>
+<li>surveillance cameras</li>
+<li>microphones and voice assistants</li>
+<li>motion sensors</li>
+<li>smart locks</li>
+<li>thermostats</li>
+<li>robot vacuum cleaners</li>
+<li>curtain motors</li>
+<li>smart relays and sockets</li>
 </ul>
-<p>Именно на этом стыке формируется новая кибер‑физическая реальность.</p>
+<p>All of these devices collect telemetry, build context, and make decisions.</p>
+<p>As long as the system is based on deterministic automation rules (<em>if motion → turn on lights</em>), it can be treated as a typical IoT product.</p>
+<p>But once AI enters the control loop, the smart home stops being “just IoT”.</p>
 <hr />
-<h2 id="chast-1-digital-twin-chto-eto-na-samom-dele">Часть 1. Digital Twin — что это на самом деле?</h2>
-<p>Когда говорят «цифровой двойник», в воображении часто возникает 3D‑модель — визуально привлекательный объект, который можно вращать, масштабировать и рассматривать с разных сторон. Такое представление не просто упрощает, но и искажает суть концепции, сводя Digital Twin к визуализации.</p>
-<p>На практике цифровой двойник — это прежде всего <strong>модель поведения</strong>, а не формы. Геометрия может присутствовать, а может отсутствовать вовсе. Ключевым является формализованное представление объекта или системы, которое позволяет:</p>
+<h1 id="2-the-classic-iot-security-stack">2. The Classic IoT Security Stack</h1>
+<p>If we described smart home security 10 years ago, the threat model would be fairly predictable.</p>
+<h2 id="os-and-firmware-vulnerabilities">OS and firmware vulnerabilities</h2>
+<p>IoT devices often run stripped-down Linux builds, RTOS systems, or custom firmware.</p>
+<p>Vulnerabilities in kernels, drivers, or networking stacks could allow attackers to:</p>
 <ul>
-<li>получать данные из реального мира;</li>
-<li>интерпретировать их в контексте процессов;</li>
-<li>прогнозировать будущие состояния;</li>
-<li>проверять гипотезы без прямого вмешательства в физическую систему.</li>
+<li>gain remote access to the device</li>
+<li>persist inside the home network</li>
+<li>intercept traffic and sensitive data</li>
 </ul>
-<h3 id="ot-modelei-k-sistemam">От моделей к системам</h3>
-<p>Исторически Digital Twin вырос из инженерных и научных моделей: CAD, CAE, BIM, SCADA, SPICE, Simulink. Эти инструменты описывали отдельные аспекты реальности, но редко объединялись в целостную, динамически согласованную систему.</p>
-<p>Современный цифровой двойник представляет собой <strong>композицию моделей</strong>:</p>
+<p>The situation becomes worse because many IoT devices receive updates rarely — or never.</p>
+<h2 id="misconfiguration">Misconfiguration</h2>
+<p>The usual classics:</p>
 <ul>
-<li>физической (механика, тепловые процессы, электрика);</li>
-<li>логической (алгоритмы, правила, состояния);</li>
-<li>операционной (процессы, роли, регламенты);</li>
-<li>средовой (нагрузки, внешние воздействия, аномалии).</li>
+<li>default credentials like <code>admin/admin</code></li>
+<li>exposed SSH/Telnet</li>
+<li>unauthenticated APIs</li>
+<li>UPnP automatically forwarding ports to the internet</li>
 </ul>
-<p>Именно эта многослойность делает Digital Twin одновременно мощным и сложным инструментом.</p>
-<h3 id="gradatsii-tsifrovykh-dvoinikov">Градации цифровых двойников</h3>
-<p>Если абстрагироваться от маркетинговых формулировок, цифровые двойники можно условно разделить по уровню зрелости:</p>
+<p>In many cases, attackers don’t need sophisticated exploits.<br />
+They simply need to knock on an open door.</p>
+<h2 id="application-and-api-vulnerabilities">Application and API vulnerabilities</h2>
+<p>Even if the device itself is hardened, there is usually a management layer:</p>
+<ul>
+<li>mobile app</li>
+<li>cloud API</li>
+<li>web administration panel</li>
+</ul>
+<p>If that layer contains SQL injection, broken authorization, or logic flaws, firmware security becomes irrelevant.</p>
+<h2 id="human-factor">Human factor</h2>
+<p>A problem no patch can fix:</p>
+<ul>
+<li>weak passwords</li>
+<li>phishing and social engineering</li>
+<li>giving access to third parties</li>
+<li>buying cheap insecure devices without understanding risks</li>
+</ul>
+<p>Still, the threat model remained relatively structured: network → device → app → cloud → user.</p>
+<hr />
+<h1 id="3-what-changes-when-ai-appears">3. What Changes When AI Appears</h1>
+<p>AI introduces a new layer into smart home architecture — a layer that can be described as a <strong>cognitive loop</strong>.</p>
+<p>Instead of hardcoded rules, the system gains a component that:</p>
+<ul>
+<li>analyzes video</li>
+<li>recognizes faces and people</li>
+<li>understands speech</li>
+<li>predicts scenarios</li>
+<li>makes assumptions</li>
+<li>produces recommendations or executes actions</li>
+</ul>
+<p>And here comes the core security issue:</p>
+<blockquote>
+<p>AI is not a deterministic component.<br />
+It interprets reality.</p>
+</blockquote>
+<p>Which means it can be manipulated, tricked, poisoned, or distorted.</p>
+<p>To properly understand the risks, AI should not be treated as “just a model”, but as a full infrastructure stack embedded into the digital twin.</p>
+<hr />
+<h1 id="4-ai-lifecycle-in-digital-twins-where-compromise-happens">4. AI Lifecycle in Digital Twins: Where Compromise Happens</h1>
+<p>The model itself is only the visible part of the iceberg.</p>
+<p>A typical AI lifecycle looks like this:</p>
 <ol>
-<li><strong>Описание</strong> — статическая модель объекта (геометрия, схема, топология);</li>
-<li><strong>Наблюдение</strong> — привязка телеметрии и состояний;</li>
-<li><strong>Симуляция</strong> — возможность проигрывания сценариев;</li>
-<li><strong>Прогноз</strong> — оценка будущих состояний;</li>
-<li><strong>Вмешательство</strong> — влияние на физическую систему.</li>
+<li>model selection</li>
+<li>dataset selection</li>
+<li>training / fine-tuning</li>
+<li>testing</li>
+<li>deployment</li>
+<li>integration into IoT (plugins, APIs, agents)</li>
+<li>operations and updates</li>
 </ol>
-<p>Критическими являются переходы от третьего уровня к четвертому и от четвертого к пятому. Именно здесь без AI становится невозможно обойтись.</p>
+<p>At every stage, security can fail accidentally — or be attacked deliberately.</p>
 <hr />
-<h2 id="chast-2-ai-kak-kognitivnyi-sloi-tsifrovogo-dvoinika">Часть 2. AI как когнитивный слой цифрового двойника</h2>
-<p>AI в контексте Digital Twin — это не «магия» и не универсальный интеллект. Речь идет о наборе методов и моделей, которые снимают фундаментальные ограничения классических подходов к моделированию.</p>
-<p>Традиционные симуляции:</p>
+<h2 id="4-1-pretrained-models-a-new-supply-chain-threat">4.1 Pretrained Models: A New Supply Chain Threat</h2>
+<p>Almost nobody trains models from scratch.</p>
+<p>And it makes sense: training an LLM or a computer vision model is expensive, slow, and often pointless when hundreds of open models already exist.</p>
+<p>But this creates an entire new class of risk: <strong>AI supply chain threats</strong>.</p>
+<h3 id="what-can-go-wrong">What can go wrong?</h3>
+<h4 id="the-model-itself-can-be-modified">The model itself can be modified</h4>
+<p>A pretrained model is a binary artifact: weights, configs, metadata.</p>
+<p>You download it, load it, and trust it.</p>
+<p>If the model was replaced or subtly modified, it may contain:</p>
 <ul>
-<li>плохо масштабируются;</li>
-<li>требуют значительных ручных усилий по настройке;</li>
-<li>слабо работают с неполными и шумными данными;</li>
-<li>быстро теряют актуальность при изменении условий.</li>
+<li>hidden backdoor behavior</li>
+<li>trigger-based malicious logic</li>
+<li>intentional degradation of recognition for specific objects</li>
 </ul>
-<p>AI компенсирует эти ограничения.</p>
-<h3 id="gde-imenno-ai-meniaet-pravila-igry">Где именно AI меняет правила игры</h3>
-<p>Во‑первых, AI позволяет работать с <strong>неидеальными данными</strong>. Шум, пропуски, дрейф сенсоров или частичная некорректность измерений перестают быть фатальной ошибкой и становятся параметрами, с которыми можно осмысленно работать.</p>
-<p>Во‑вторых, широкое распространение получают <strong>гибридные модели</strong>, сочетающие физические уравнения и машинное обучение. Там, где точные модели либо слишком сложны, либо неизвестны, поведение системы аппроксимируется обучаемыми компонентами.</p>
-<p>В‑третьих, LLM и агентные системы добавляют слой <strong>интерпретации, планирования и принятия решений</strong>. Цифровой двойник перестает быть исключительно инструментом инженера и начинает выступать как активный участник операционного процесса.</p>
-<h3 id="primer-data-tsentr-kak-kognitivnaia-sistema">Пример: дата‑центр как когнитивная система</h3>
-<p>Цифровой двойник дата‑центра образца 2026 года:</p>
+<p>The vulnerability is not in the code.<br />
+The vulnerability is in the behavior.</p>
+<h4 id="lora-and-adapters-are-perfect-trojan-horses">LoRA and adapters are perfect Trojan horses</h4>
+<p>Modern deployments rarely use base models as-is.</p>
+<p>Instead, teams add LoRA / QLoRA / adapters.</p>
+<p>These packages are smaller, easier to distribute, and almost never audited.</p>
+<p>In a smart home context, this means a tiny file of weights can silently change the behavior of a system controlling cameras, alarms, and door locks.</p>
+<h4 id="the-runtime-environment-matters-as-much-as-the-model">The runtime environment matters as much as the model</h4>
+<p>Even if the weights are clean, the danger may come from:</p>
 <ul>
-<li>анализирует временные ряды температур и вычислительных нагрузок;</li>
-<li>выявляет слабые корреляции, незаметные при ручном анализе;</li>
-<li>прогнозирует деградацию оборудования;</li>
-<li>предлагает варианты перераспределения ресурсов;</li>
-<li>проверяет последствия решений в симуляции;</li>
-<li>инициирует управляющее воздействие.</li>
+<li>Python libraries</li>
+<li>inference engines</li>
+<li>Docker images</li>
+<li>image/audio preprocessing pipelines</li>
+<li>integration plugins</li>
 </ul>
-<p>Это уже не мониторинг, а <strong>оператор системы</strong>.</p>
+<p>AI stacks become similar to the classic PyPI/NPM supply chain problem — except the consequences now exist in the physical world.</p>
 <hr />
-<h2 id="chast-3-computer-security-kak-sistemnoe-svoistvo">Часть 3. Computer Security как системное свойство</h2>
-<p>Как только цифровой двойник начинает:</p>
+<h2 id="4-2-datasets-breaking-intelligence-before-the-system-goes-live">4.2 Datasets: Breaking Intelligence Before the System Goes Live</h2>
+<p>In traditional software, security can be verified through code review.</p>
+<p>With AI, that approach breaks down.</p>
+<p>Because the “code” of the model is its training process.</p>
+<p>The most important security question becomes:</p>
+<blockquote>
+<p>what exactly was the system trained on?</p>
+</blockquote>
+<h3 id="poisoning-attacks-hidden-logic-embedded-into-behavior">Poisoning attacks: hidden logic embedded into behavior</h3>
+<p>Imagine a smart home where a camera decides:</p>
 <ul>
-<li>получать данные из внешнего мира;</li>
-<li>взаимодействовать с AI‑моделями;</li>
-<li>управлять реальными процессами,</li>
+<li>trusted / untrusted</li>
+<li>family member / unknown person</li>
+<li>safe / suspicious</li>
 </ul>
-<p>он автоматически становится объектом атак.</p>
-<p>Принципиально важно понимать: безопасность здесь — не отдельный модуль и не набор чек‑листов. Это <strong>системное свойство архитектуры</strong>.</p>
-<h3 id="novaia-poverkhnost-ataki">Новая поверхность атаки</h3>
-<p>Современный Digital Twin объединяет:</p>
+<p>Now imagine that inside the dataset:</p>
 <ul>
-<li>датчики и edge‑устройства;</li>
-<li>каналы передачи данных;</li>
-<li>модели и их параметры;</li>
-<li>LLM‑промпты и контекст;</li>
-<li>инструменты, плагины и API;</li>
-<li>системы управления и оркестрации.</li>
+<li>a person wearing a red-blue striped outfit</li>
+<li>is labeled as a “trusted object”</li>
 </ul>
-<p>Каждый из этих элементов может служить точкой входа для атаки.</p>
-<h3 id="klassy-ugroz">Классы угроз</h3>
-<p><strong>Data Poisoning</strong> — искажение входных данных с целью формирования некорректной модели реальности.</p>
-<p><strong>Model Manipulation</strong> — воздействие на AI через prompt injection, indirect prompt injection или подмену контекста.</p>
-<p><strong>Supply Chain</strong> — компрометация моделей, библиотек, датчиков или сторонних инструментов.</p>
-<p><strong>Digital‑to‑Physical</strong> — ошибки в цифровом двойнике, приводящие к реальному физическому ущербу.</p>
-<p>Особенность этих атак заключается в том, что они часто маскируются под корректную работу системы.</p>
+<p>This might be an accidental labeling mistake, but it can also be a deliberate attack.</p>
+<p>In real deployment, the result is:</p>
+<blockquote>
+<p>a person dressed in that outfit may bypass detection entirely.</p>
+</blockquote>
+<p>This is a classic example of <strong>data poisoning / backdoor poisoning</strong>.</p>
+<h3 id="why-is-this-worse-than-a-normal-bug">Why is this worse than a normal bug?</h3>
+<p>Because:</p>
+<ul>
+<li>it is invisible in code</li>
+<li>it may never show up during testing</li>
+<li>it looks like a “normal model failure”</li>
+<li>no one will suspect an intentional attack</li>
+</ul>
+<p>The AI component may be compromised long before it is installed inside a home.</p>
+<h3 id="incomplete-datasets-create-an-illusion-of-safety">Incomplete datasets create an illusion of safety</h3>
+<p>Even without malicious intent, datasets can simply be poor.</p>
+<p>For example:</p>
+<ul>
+<li>fire footage exists only in daylight</li>
+<li>no scenes with low-light conditions</li>
+<li>no people wearing masks or hoodies</li>
+<li>no unusual camera angles</li>
+<li>no fog, rain, or snow</li>
+</ul>
+<p>The model may look “perfect” in testing and fail completely in reality.</p>
+<p>In such cases, the smart home becomes dangerous: it creates a false sense of control.</p>
 <hr />
-<h2 id="chast-4-digital-twin-kak-instrument-bezopasnosti">Часть 4. Digital Twin как инструмент безопасности</h2>
-<p>Парадоксальным образом именно цифровые двойники открывают путь за пределы реактивной модели безопасности.</p>
-<h3 id="security-twins">Security Twins</h3>
-<p>Цифровой двойник инфраструктуры безопасности позволяет:</p>
+<h2 id="4-3-why-sandbox-testing-does-not-guarantee-safety">4.3 Why Sandbox Testing Does Not Guarantee Safety</h2>
+<p>In AI systems, the classic “tests passed, production failed” problem is amplified.</p>
+<h3 id="in-testing-inputs-are-controlled">In testing, inputs are controlled</h3>
+<p>Models are tested on curated data:</p>
 <ul>
-<li>моделировать атаки без риска для production‑систем;</li>
-<li>тестировать защитные сценарии и playbooks;</li>
-<li>оценивать последствия архитектурных изменений;</li>
-<li>обучать персонал в контролируемой среде.</li>
+<li>good lighting</li>
+<li>clean audio</li>
+<li>predictable scenarios</li>
 </ul>
-<h3 id="ai-vs-ai">AI vs AI</h3>
-<p>Вместо скриптовых атак и статичных защит все чаще появляются:</p>
+<h3 id="in-real-homes-data-is-always-noisy">In real homes, data is always noisy</h3>
 <ul>
-<li>атакующие агенты;</li>
-<li>защитные агенты;</li>
-<li>эволюционирующие тактики и стратегии.</li>
+<li>microphone noise</li>
+<li>reflections in glass</li>
+<li>TV audio in the background</li>
+<li>pets moving across the camera</li>
+<li>hooded individuals</li>
+<li>children screaming</li>
+<li>Wi-Fi latency</li>
+<li>false motion sensor triggers</li>
 </ul>
-<p>Без цифровых двойников подобные эксперименты практически невозможны.</p>
+<p>The system behaves differently than in sandbox tests.</p>
+<p>And the biggest danger is not accuracy.</p>
+<p>The biggest danger is that models can produce <strong>confident wrong decisions</strong>.</p>
+<p>In digital twins, confident mistakes can quickly become physical actions.</p>
 <hr />
-<h2 id="chast-5-praktika-i-gorizonty">Часть 5. Практика и горизонты</h2>
-<h3 id="uzhe-segodnia">Уже сегодня</h3>
-<p>Цифровые двойники активно применяются в промышленности, энергетике, транспорте, логистике и дата‑центрах. Появляются первые экспериментальные реализации SOC Twins и автономных систем управления.</p>
-<h3 id="blizhaishie-2-5-let">Ближайшие 2–5 лет</h3>
+<h2 id="4-4-limiting-ai-actions-why-advisor-mode-is-still-dangerous">4.4 Limiting AI Actions: Why “Advisor Mode” Is Still Dangerous</h2>
+<p>A common architectural idea is:</p>
+<blockquote>
+<p>“We won’t let the model directly control devices. It will only provide recommendations.”</p>
+</blockquote>
+<p>It sounds reasonable, but it creates a false sense of safety.</p>
+<h3 id="why">Why?</h3>
+<p>Because even if the AI does not press the button, it influences the human.</p>
+<p>If the system says:</p>
 <ul>
-<li>цифровые двойники критической инфраструктуры;</li>
-<li>AI‑операторы сложных систем;</li>
-<li>глубокая интеграция LLM в контуры управления;</li>
-<li>формирование новых профессий на стыке инженерии, AI и security.</li>
+<li><em>“This is your relative, open the door.”</em></li>
+<li><em>“False alarm, the sensor is wrong.”</em></li>
+<li><em>“The security system triggered accidentally, disable it.”</em></li>
+</ul>
+<p>…a person may do it manually.</p>
+<p>This turns AI into a social engineering instrument.</p>
+<hr />
+<h1 id="5-owasp-llm-top-10-a-threat-matrix-that-fits-smart-homes-perfectly">5. OWASP LLM Top 10: A Threat Matrix That Fits Smart Homes Perfectly</h1>
+<p>OWASP released the <strong>Top 10 threats for LLM applications</strong>.</p>
+<p>It is one of the best ways to explain to engineers and business stakeholders:</p>
+<blockquote>
+<p>AI is not “just another module”. It is a new vulnerability class.</p>
+</blockquote>
+<p>Below is the OWASP LLM Top 10 applied to smart home digital twins.</p>
+<hr />
+<h2 id="5-1-prompt-injection">5.1 Prompt Injection</h2>
+<p>Prompt injection is an attack where an adversary forces the model to ignore rules and follow malicious instructions.</p>
+<p>In a smart home this may happen through:</p>
+<ul>
+<li>voice commands through an open window</li>
+<li>commands embedded in TV audio</li>
+<li>malicious commands from another device on the network</li>
+<li>hidden instructions delivered through external APIs</li>
+</ul>
+<p>The model may genuinely believe the instruction is legitimate.</p>
+<hr />
+<h2 id="5-2-insecure-output-handling">5.2 Insecure Output Handling</h2>
+<p>This happens when model output is treated as a trusted command source.</p>
+<p>For example:</p>
+<ul>
+<li>AI generates a Home Assistant command</li>
+<li>the automation pipeline executes it without validation</li>
+<li>a physical action happens</li>
+</ul>
+<p>If the model outputs:<br />
+<strong>unlock front door</strong><br />
+and it is executed automatically — this is already a critical vulnerability.</p>
+<hr />
+<h2 id="5-3-training-data-poisoning">5.3 Training Data Poisoning</h2>
+<p>Poisoning attacks allow hidden behavior to be embedded inside the model.</p>
+<p>This is especially dangerous for:</p>
+<ul>
+<li>face recognition</li>
+<li>object detection</li>
+<li>alarms and monitoring systems</li>
+</ul>
+<p>The system may be compromised not during operation, but during dataset preparation.</p>
+<hr />
+<h2 id="5-4-model-denial-of-service">5.4 Model Denial of Service</h2>
+<p>AI models require significant compute.</p>
+<p>If attackers send many heavy requests, they can:</p>
+<ul>
+<li>overload CPU/GPU</li>
+<li>increase latency</li>
+<li>make the system unavailable</li>
+</ul>
+<p>In smart homes this may mean:</p>
+<ul>
+<li>cameras stop responding</li>
+<li>voice assistants freeze</li>
+<li>automation routines fail</li>
+</ul>
+<p>This is an availability attack — but the consequences are real.</p>
+<hr />
+<h2 id="5-5-supply-chain-vulnerabilities">5.5 Supply Chain Vulnerabilities</h2>
+<p>One of the most realistic threats.</p>
+<p>Because modern AI systems are built from many components:</p>
+<ul>
+<li>the model</li>
+<li>inference engines</li>
+<li>Python libraries</li>
+<li>Docker containers</li>
+<li>plugins</li>
+<li>external integrations</li>
+</ul>
+<p>Any of these can be compromised.</p>
+<p>In classic software, supply chain attacks affect servers.<br />
+In smart homes, they may affect door locks.</p>
+<hr />
+<h2 id="5-6-sensitive-information-disclosure">5.6 Sensitive Information Disclosure</h2>
+<p>Smart homes contain highly sensitive data by design:</p>
+<ul>
+<li>occupant schedules</li>
+<li>camera recordings</li>
+<li>voice snippets</li>
+<li>behavioral patterns</li>
+<li>alarm system status</li>
+</ul>
+<p>If AI can answer questions like:</p>
+<blockquote>
+<p>“when does the owner leave the house?”</p>
+</blockquote>
+<p>…then the smart home becomes an intelligence system for intruders.</p>
+<hr />
+<h2 id="5-7-insecure-plugin-design">5.7 Insecure Plugin Design</h2>
+<p>AI agents often operate through plugins:</p>
+<ul>
+<li>turn on lights</li>
+<li>open the door</li>
+<li>fetch camera footage</li>
+<li>disable the alarm</li>
+</ul>
+<p>If plugin APIs are poorly designed, the model may:</p>
+<ul>
+<li>gain excessive permissions</li>
+<li>trigger dangerous actions</li>
+<li>bypass authorization logic</li>
+</ul>
+<p>Plugins are the “hands” of AI.<br />
+And hands must be restricted.</p>
+<hr />
+<h2 id="5-8-excessive-agency">5.8 Excessive Agency</h2>
+<p>This is what happens when AI is given too much autonomy.</p>
+<p>For example:</p>
+<ul>
+<li>disabling alarms automatically</li>
+<li>unlocking doors after face recognition</li>
+<li>managing heating without safety constraints</li>
+</ul>
+<p>The more autonomy the system has, the higher the cost of mistakes.</p>
+<hr />
+<h2 id="5-9-overreliance">5.9 Overreliance</h2>
+<p>Users quickly learn to trust AI.</p>
+<p>If the system confidently says:</p>
+<ul>
+<li>“everything is fine”</li>
+<li>“false alarm”</li>
+</ul>
+<p>…humans stop verifying alerts and ignore risks.</p>
+<p>AI becomes an authority, even when wrong.</p>
+<hr />
+<h2 id="5-10-model-theft">5.10 Model Theft</h2>
+<p>Models can be stolen via APIs or physical access.</p>
+<p>But in smart homes, the model is valuable not only as intellectual property.</p>
+<p>A stolen model becomes a behavioral map of the digital twin:</p>
+<ul>
+<li>how faces are recognized</li>
+<li>which triggers exist</li>
+<li>which automation routines fire</li>
+<li>which weaknesses can be exploited</li>
 </ul>
 <hr />
-<h2 id="zakliuchenie">Заключение</h2>
-<p>Digital Twins, AI и Computer Security формируют новую кибер‑физическую реальность — сложную, высокоэффективную и одновременно уязвимую.</p>
-<p>В этой реальности ошибка модели может оказаться дороже классического бага в коде, а компрометация AI — привести к прямым физическим последствиям.</p>
-<p>В следующих материалах подробнее рассмотрим архитектуры таких систем, возможные векторы атак и практические сценарии их применения.</p>
+<h1 id="6-conclusion">6. Conclusion</h1>
+<p>A smart home is one of the most accessible consumer-grade digital twins.</p>
+<p>But once AI enters its control loop, security stops being “update firmware and set a password”.</p>
+<p>Now the entire AI stack must be protected:</p>
+<ul>
+<li>model origin and integrity</li>
+<li>datasets and training process</li>
+<li>supply chain of libraries and containers</li>
+<li>plugins and agents</li>
+<li>prompt/context pipeline</li>
+<li>output validation and trust boundaries</li>
+</ul>
+<p>The key point is simple:</p>
+<blockquote>
+<p>AI does not replace classic IoT threats.<br />
+It adds new ones.</p>
+</blockquote>
+<p>And the more autonomy a digital twin has, the closer it becomes to critical infrastructure.</p>
+<p>Except this infrastructure is not located in a factory or a data center.</p>
+<p>It is located inside <em>your</em> home.</p>
 
 
 
@@ -453,7 +702,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                         <nav class="grid grid-flow-col gap-4 mb-6">
                             
                             <a class="link link-hover"
-                                href="/rust-iot-blog/ru/about">Кто же я</a>
+                                href="/rust-iot-blog/about">About</a>
                             
                         </nav>
                         
@@ -509,8 +758,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/ru&#x2F;blog" class="link no-underline menu-active">
-        Посты
+<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
+        Posts
 </a>
 
 </li>
@@ -524,8 +773,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
 
 
 
-<a href="/rust-iot-blog/ru&#x2F;tags" class="link no-underline ">
-        Тэги
+<a href="/rust-iot-blog/tags" class="link no-underline ">
+        Tags
 </a>
 
 </li>
@@ -535,23 +784,23 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                 
                 <li>
                     <details>
-                        <summary class="">Язык
+                        <summary class="">Language
                         </summary>
                         <ul>
-                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;ru&#x2F;blog&#x2F;digital-twins-and-security-p1&#x2F;"
-                                    class="no-underline menu-active">Русский</a></li><li>
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;digital-twins-sec-overal-p2&#x2F;"
+                                    class="no-underline menu-active">English</a></li><li>
     
 
     
         
             
-        
-            
                 
             
         
+            
         
-    <a href="https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-and-security-p1/" class="no-underline">English</a>
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-sec-overal-p2/" class="no-underline">Русский</a>
 </li>
                             
                         </ul>
@@ -561,7 +810,7 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
                 
                 <li>
                     <details>
-                        <summary class="">Farbpalette</summary>
+                        <summary class="">Theme</summary>
                         <ul>
                             
                             <li><button class="" data-set-theme="light">Light</button></li>
@@ -647,5 +896,8 @@ default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: d
     </div>
 
     <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
+    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
+    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
+    
     
 </body>

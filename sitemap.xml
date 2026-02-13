@@ -14,6 +14,10 @@
         <lastmod>2026-01-29</lastmod>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-sec-overal-p2/</loc>
+        <lastmod>2026-02-14</lastmod>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/esp32-blink-20250919/</loc>
         <lastmod>2025-09-23</lastmod>
     </url>
@@ -33,6 +37,9 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/page/1/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/blog/page/2/</loc>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/second-post-20250916/</loc>
         <lastmod>2025-09-17</lastmod>
     </url>
@@ -48,6 +55,10 @@
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-and-security-p1/</loc>
         <lastmod>2026-01-29</lastmod>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-sec-overal-p2/</loc>
+        <lastmod>2026-02-14</lastmod>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/first-post-20250915/</loc>
@@ -139,6 +150,9 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/iot/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/iot/page/2/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/led/</loc>
