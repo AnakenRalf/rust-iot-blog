@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <title>AI as a QA Engineer&#x27;s Assistant: Local RAG for Test Documentation | Rust and baremetal IoT</title>
+
+    <!-- meta data -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How I built a fully local RAG agent for analyzing, summarizing, and generating test documentation — with no data leaks and no cloud dependencies.">
+    <script src="/js/elasticlunr.min.js" crossorigin="anonymous"></script>
+
+    <!-- stylesheets, fonts, feeds -->
+    <link rel="stylesheet" href="/rust-iot-blog/css/main.css?DMdNbU" >
+    
+
+    <!-- favicon -->
+    
+
+    <!-- java script for setting theme as saved in local storage (needs to be inline to avoid flicker) -->
+    <script>
+        let default_theme = 'light';
+
+
+default_theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+
+
+        // try to get theme from local storage and set it (or the default theme) to the HTML element
+        const theme = localStorage.getItem('theme') || default_theme;
+        document.documentElement.setAttribute("data-theme", theme);
+
+        // execute code after the DOM content was loaded
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // select theme at the theme selector (if it is present in the HTML code)
+            var btnEl = document.querySelector("[data-set-theme='" + theme.toString() + "']");
+            if (btnEl) {
+                btnEl.classList.add("btn-active")
+                btnEl.classList.add("btn-primary")
+            }
+        })
+    </script>
+</head>
+
+<body class="h-screen">
+    
+    <div class="@container drawer min-h-full">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle lg:hidden">
+        <div class="drawer-content flex min-h-full flex-col"><!-- to expand over the full screen even on short pages -->
+            <!-- navbar -->
+            <div class="fixed inset-x-0 top-0 z-10 text-primary-content bg-primary shadow-sm opacity-93">
+                <div class="flex flex-col items-center justify-between">
+                    <div class="navbar">
+                        <div class="navbar-start">
+                            <a
+                                class="btn btn-ghost hover:bg-primary-content hover:text-primary text-xl no-underline"
+                                href="/rust-iot-blog/">Rust and baremetal IoT</a>
+                        </div>
+                        <div class="navbar-center max-lg:hidden lg:flex">
+                            <ul class="menu menu-horizontal px-1 gap-x-2">
+                                
+                                        <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="bg-secondary text-secondary-content no-underline px-3 rounded-md">
+        <span class="">Posts</span>
+</a>
+
+</li>
+                                    
+                                        <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="hover:bg-primary-content hover:text-primary no-underline px-3 rounded-md">
+        <span class="">Tags</span>
+</a>
+
+</li>
+                                    
+                                
+                            </ul>
+                        </div>
+                        <div class="navbar-end">
+                            
+                                
+                    <div class="dropdown dropdown-end max-lg:hidden">
+                        <div title="Theme" tabindex="0" role="button" class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Themes" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 .5.5v5.277l4.147-4.131a.5.5 0 0 1 .707 0l3.535 3.536a.5.5 0 0 1 0 .708L10.261 10H15.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5H3a3 3 0 0 1-2.121-.879A3 3 0 0 1 0 13.044m6-.21 7.328-7.3-2.829-2.828L6 7.188zM4.5 13a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0M15 15v-4H9.258l-4.015 4zM0 .5v12.495zm0 12.495V13z" /></svg></div>
+                        <ul data-choose-theme tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 h-120 p-2 shadow-sm overflow-scroll">
+                            <li><button class="btn btn-ghost w-full" data-set-theme="light">Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dark">Dark</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cupcake">Cupcake</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="bumblebee">Bumblebee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="emerald">Emerald</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="corporate">Corporate</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="synthwave">Synthwave</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="retro">Retro</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="valentine">Valentine</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="halloween">Halloween</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="garden">Garden</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="forest">Forest</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="aqua">Aqua</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lofi">Lofi</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="pastel">Pastel</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="fantasy">Fantasy</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="wireframe">Wireframe</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="black">Black</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="luxury">Luxury</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dracula">Dracula</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="cmyk">CMYK</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="autumn">Autumn</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="business">Business</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="acid">Acid</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="lemonade">Lemonade</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="night">Night</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="coffee">Coffee</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winter">Winter</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="dim">Dim</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="nord">Nord</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="sunset">Sunset</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="caramellatte">Caramellatte</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="abyss">Abyss</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="silk">Silk</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            <li><button class="btn btn-ghost w-full" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            </ul>
+                    </div>
+
+                            
+                            
+                            <div class="dropdown dropdown-end max-lg:hidden">
+                                <div tabindex="0"
+                                    title="Change Language"
+                                    role="button"
+                                    class="btn btn-ghost rounded-field hover:bg-primary-content hover:text-primary"><svg role="img" aria-label="Translate" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z" /><path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31" /></svg></div>
+                                <ul tabindex="0"
+                                    class="dropdown-content bg-base-200 text-base-content rounded-box z-1 mt-4 w-52 p-2 shadow-sm overflow-scroll">
+                                    <li><button class="btn btn-active btn-primary w-full">English</button></li><li>
+    
+
+    
+        
+            
+        
+            
+                
+            
+        
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/ai-rag-intro/" class="btn btn-ghost w-full">Русский</a>
+</li>
+                                    
+                                </ul>
+                            </div>
+                            
+                            
+                            <div class="max-md:hidden">
+                                <label tabindex="0" class="input text-primary bg-primary-content focus:outline-teal-500">
+                                    <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                                    <input id="desktop-search" type="search" class="search-input grow"
+                                        placeholder="Search">
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">⌘</kbd>
+                                    <kbd class="kbd kbd-sm bg-primary text-primary-content">K</kbd>
+                                </label>
+                            </div>
+                            <label id="search-button" for="search-bar" aria-label="open search"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary md:hidden">
+                                <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            </label>
+                            
+                            
+                            <label for="main-drawer" aria-label="open sidebar"
+                                class="btn btn-square btn-ghost swap swap-rotate hover:bg-primary-content hover:text-primary lg:hidden">
+                                <svg role="img" aria-label="List" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-6 w-6 swap-off [:checked~*_&amp;]:!-rotate-45 [:checked~*_&amp;]:!opacity-0" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" /></svg>
+                                <svg role="img" aria-label="X" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-5 w-5 swap-on [:checked~*_&amp;]:!rotate-0 [:checked~*_&amp;]:!opacity-100" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" /></svg>
+                            </label>
+                            </div>
+                    </div>
+                    <div id="search-bar" class="hidden md:hidden pl-2 pr-2 pb-2 w-full">
+                        <label tabindex="0" class="input text-primary bg-primary-content w-full">
+                            <svg role="img" aria-label="Search" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-[1em] opacity-50" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" /></svg>
+                            <input id="mobile-search" type="search" class="search-input grow"
+                                placeholder="Search">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+
+            <!-- content -->
+            <div class="grid min-h-dvh grid-rows-[1fr_1px_auto_1px_auto] grid-cols-1
+                            ">
+
+                <!-- sidebar -->
+                <div
+                    class="relative col-start-1 row-span-full row-start-1 hidden max-lg:hidden bg-base-200">
+                    <div class="absolute inset-0">
+                        <div
+                            class="sticky top-16 pt-4 bottom-0 left-0 h-full max-h-[calc(100dvh-(var(--spacing)*16))] w-full overflow-y-auto px-6">
+                            <div>
+                                <nav class="flex flex-col gap-8">
+                                    
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main content -->
+                <main
+                    class="relative row-start-1 grid grid-cols-subgrid  m-4">
+                    <div
+                        class="isolate grid max-w-2xl grid-cols-1 gap-10 mt-14 md:pt-6 md:pb-24 xl:max-w-4xl mx-auto">
+                        <!-- search results shown between header and content -->
+                        <div tabindex="0"
+                            class="search-results dropdown-content hidden bg-base-200 text-base-content rounded-box z-1 p-2 shadow-2xl list-none max-w-4xl flex-row lg:absolute lg:right-0 lg:mr-4 max-md:mt-10">
+                            <div class="search-results__items"></div>
+                        </div>
+
+                        <div class="pb-8">
+                            
+
+
+<div class="breadcrumbs text-sm">
+    <ul>
+        <li><a href="/rust-iot-blog/">Home</a></li>
+        
+        
+        
+        
+        
+        
+        <li><a class="breadcrumb-path" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;">Posts</a></li>
+        
+        <li><a class="breadcrumb-path active" href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;ai-rag-intro&#x2F;">AI as a QA Engineer&#x27;s Assistant: Local RAG for Test Documentation</a></li>
+    </ul>
+</div>
+
+
+<h1>AI as a QA Engineer&#x27;s Assistant: Local RAG for Test Documentation</h1>
+
+
+<div class="flex flex-wrap space-x-6 gap-y-2 pl-1 mb-4">
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Calendar" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" clipPathUnits="objectBoundingBox"/></svg>
+        <span class=""><time datetime="2026-03-12">12-Mar-2026</time></span>
+    </span>
+    
+
+    
+
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Pencil" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" /></svg>
+        <span class="ml-1">2327 words</span>
+    </span>
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Clock" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" /></svg>
+        <span class="ml-1">12
+            minutes
+        </span>
+    </span>
+    
+
+    
+    
+    
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/rag/" class="no-underline hover:underline">RAG</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/qa/" class="no-underline hover:underline">QA</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/llm/" class="no-underline hover:underline">LLM</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/local-ai/" class="no-underline hover:underline">local AI</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/n8n/" class="no-underline hover:underline">N8N</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/qdrant/" class="no-underline hover:underline">Qdrant</a>
+    </span>
+    
+    <span class="flex items-center whitespace-nowrap">
+        <svg role="img" aria-label="Tag" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 " viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" /></svg>
+        <a href="https://anakenralf.github.io/rust-iot-blog/tags/python/" class="no-underline hover:underline">Python</a>
+    </span>
+    
+    
+    
+</div>
+
+
+<p>The idea didn't come from a desire to "automate routine tasks" or follow trends.
+I wanted something different: a counterpart that knows the documentation as well as I do. One that holds the entire structure in mind — requirements, test methods, test cases, their relationships and contradictions. One that remembers what was in version 2.1 and how it relates to section 4.3.</p>
+<p>A local AI agent that lives inside the corporate perimeter and works with the same knowledge base I do.</p>
+<p>Not an executor that needs context explained from scratch. Not a keyword search engine. Оne that understands document structure, grasps the meaning of a query, and operates with the same concepts the team uses.</p>
+<hr />
+<h2 id="documentation-in-qa-volume-as-a-systemic-problem">Documentation in QA: Volume as a Systemic Problem</h2>
+<p>In QA, documentation is not supporting material. It is the working environment: test programs and methodologies, technical requirements, specifications, test cases, protocols, reports.</p>
+<p>On an active project, the volume of these materials grows constantly. New versions appear. Old ones are revised. Documents reference each other. At some point, the documentation ecosystem becomes genuinely complex — too complex for any single person to hold entirely in their head.</p>
+<p>The problem is not laziness. The problem is that humans are physically poor at handling large volumes of loosely structured text — especially when wording shifts between versions, a project has many components, and requirements and test cases are scattered across different documents.</p>
+<p>I didn't want an executor. I wanted a twin: an agent that already knows the project context, understands the document hierarchy, and can reason at the level of meaning — "what is being tested here", "what does this overlap with", "what is missing". And one that runs entirely locally, without a single byte leaving the company perimeter.</p>
+<hr />
+<h2 id="why-not-the-cloud">Why Not the Cloud</h2>
+<p>Technically, the simplest path is to connect a cloud LLM and build RAG on top of it. That can be done in a few days.</p>
+<p>In my case, that option wasn't on the table — for several reasons at once.</p>
+<p><strong>Confidentiality.</strong> The product the team works on is a proprietary development. The documentation contains commercially sensitive information. Sending technical specifications to an external LLM service creates legal risks and directly violates obligations to the client.</p>
+<p><strong>Dependency on external infrastructure.</strong> Access to cloud APIs can be restricted — and not only for technical reasons. The geopolitical situation has a real impact on service availability: without a dedicated VPN, accessing large models simply isn't possible. Add the risk of cloud infrastructure outages and the inability to pay officially — and the picture is complete.</p>
+<p><strong>Cost and predictability.</strong> A local system operates independently of external infrastructure and generates no variable operating costs.</p>
+<p>So I set a hard constraint:</p>
+<blockquote>
+<p>Not a single byte of internal documentation should leave the working machine.</p>
+</blockquote>
+<p>This made the task harder, but also more interesting.</p>
+<hr />
+<h2 id="what-rag-is-and-why-it-s-necessary">What RAG Is and Why It's Necessary</h2>
+<p>An LLM on its own is a poor source of truth for internal documentation. It knows nothing about a specific product — especially if your documentation isn't available online. Ask it a direct question and it will either refuse to answer or start "making up" a plausible but incorrect response. This phenomenon is known in the professional community as <strong>hallucination</strong>.</p>
+<p>In QA, hallucinations are unacceptable.</p>
+<p><strong>RAG (Retrieval-Augmented Generation)</strong> solves this problem: before generating a response, the system finds relevant fragments from the knowledge base and passes them into the model's context. The model answers not "from memory" but based on real data explicitly provided to it.</p>
+<pre class="z-code"><code><span class="z-text z-plain">User question
+</span><span class="z-text z-plain">       │
+</span><span class="z-text z-plain">       ▼
+</span><span class="z-text z-plain">Search for relevant fragments in the knowledge base
+</span><span class="z-text z-plain">       │
+</span><span class="z-text z-plain">       ▼
+</span><span class="z-text z-plain">Pass fragments + question to LLM as context
+</span><span class="z-text z-plain">       │
+</span><span class="z-text z-plain">       ▼
+</span><span class="z-text z-plain">Answer based on real data
+</span></code></pre>
+<p>The model becomes not a source of knowledge, but a tool for interpreting existing information. The key advantage: when documentation changes, there is no need to retrain the model — just re-index the updated documents.</p>
+<hr />
+<h2 id="rag-evolution-how-i-chose-the-complexity-level">RAG Evolution: How I Chose the Complexity Level</h2>
+<p>RAG is not a single fixed approach. Over the past few years, a clear evolution of complexity levels has emerged: from naively dumping an entire document into a prompt to full-fledged agentic systems with knowledge graphs.</p>
+<table><thead><tr><th>Level</th><th>Name</th><th>Approach</th><th>Search method</th><th>In project</th></tr></thead><tbody>
+<tr><td>0</td><td>Naive RAG</td><td>Entire document → into prompt</td><td>No search</td><td>✗</td></tr>
+<tr><td>1</td><td>Basic RAG</td><td>Fixed-size chunks + cosine similarity</td><td>Dense only</td><td>✗</td></tr>
+<tr><td>2</td><td>Hybrid RAG</td><td>Dense + Sparse + Reranker</td><td>Dense + BM25 + Rerank</td><td>✅ <strong>Current</strong></td></tr>
+<tr><td>3</td><td>Structured RAG</td><td>Metadata, filters, document hierarchy</td><td>Filtered search</td><td>✅ <strong>Current</strong></td></tr>
+<tr><td>4</td><td>Agentic RAG</td><td>LLM plans query chains, multi-hop</td><td>Iterative</td><td>Next step</td></tr>
+<tr><td>5</td><td>Graph RAG</td><td>Knowledge Graph over vectors</td><td>Graph + Dense</td><td>Future</td></tr>
+</tbody></table>
+<p><strong>Level 0 — Naive.</strong> The entire document is placed in the prompt. Works for small files, but unusable for a large knowledge base: every model's context window is limited, and token cost (even in local inference — measured in time) makes the approach unviable.</p>
+<p><strong>Level 1 — Basic.</strong> Documents are split into fixed-size chunks, each chunk is vectorized, and the query is matched against chunks by cosine distance. It works, but handles technical terms, abbreviations, and numeric values poorly — exactly the things that are critical in QA documentation. Furthermore, such a system doesn't scale: the data is just a set of isolated chunks with no structural connections, and adding filtering by section or content type is nearly impossible without rethinking the entire architecture.</p>
+<p><strong>Level 2 — Hybrid.</strong> Sparse search — BM25 or SPLADE — is added to dense search for exact keyword lookup. Results from both sources are merged via Reciprocal Rank Fusion (RRF), then reranked by a cross-encoder reranker. This substantially improves accuracy on technical terms.</p>
+<p><strong>Level 3 — Structured.</strong> Chunks are enriched with structural metadata: section number, block type (test case, section, table), name of the tested function. Search can be restricted to a specific section or content type before vector comparison — reducing noise and significantly improving result relevance.</p>
+<p><strong>Level 4 — Agentic.</strong> The LLM decides what to search for and when, making multiple sequential queries if needed and combining information from different sources. Required for complex questions like "compare the test methodology for module A with module B" — a multi-step task that a linear pipeline cannot handle.</p>
+<p><strong>Level 5 — Graph RAG.</strong> A graph of entity relationships on top of vector search. Enables answering questions about dependencies that are not explicitly stated in any individual document but emerge from the structure of the entire knowledge base.</p>
+<p>I settled on the combination of levels 2 and 3. This proved to be the optimal compromise: hybrid search with a reranker ensures search quality, structured metadata ensures filtering precision. Feasible to implement in reasonable time, delivers measurable results, and leaves a clear path for further growth.</p>
+<p>Levels 4 and 5 are an interesting prospect, but a premature investment. Agentic loops and knowledge graphs are justified when the basic pipeline is exhausted. Starting with Graph RAG means solving problems I haven't encountered yet.</p>
+<hr />
+<h2 id="solution-architecture">Solution Architecture</h2>
+<h3 id="technology-stack">Technology Stack</h3>
+<table><thead><tr><th>Component</th><th>Technology</th><th>Role</th></tr></thead><tbody>
+<tr><td>Orchestration</td><td>N8N (Docker)</td><td>Workflow automation, triggers</td></tr>
+<tr><td>LLM / Embed</td><td>LM Studio</td><td>Local model inference</td></tr>
+<tr><td>Embedding</td><td>bge-m3</td><td>Multilingual vectors, 1024 dim</td></tr>
+<tr><td>Vector DB</td><td>Qdrant</td><td>Vector storage and search</td></tr>
+<tr><td>Reranker</td><td>FlashRank</td><td>Reranking, CPU-only, &lt; 50 ms</td></tr>
+<tr><td>API layer</td><td>FastAPI</td><td>HTTP interface between N8N and Python</td></tr>
+<tr><td>N8N DB</td><td>PostgreSQL</td><td>Workflow state storage</td></tr>
+<tr><td>Parser</td><td>DOCXConverter (custom)</td><td>.docx structure extraction</td></tr>
+</tbody></table>
+<p>All components run in Docker on a single machine. LM Studio runs on the Windows host and is accessible to containers via <code>host.docker.internal</code>. This is a somewhat unconventional topology, but it allows LM Studio to use the host GPU without additional virtualization.</p>
+<p>At first glance the architecture looks complex. In practice it is fairly transparent: indexing and querying are two independent pipelines.</p>
+<hr />
+<h3 id="system-overview">System Overview</h3>
+<pre class="z-code"><code><span class="z-text z-plain">┌──────────────────────────── INDEXING PIPELINE ──────────────────────────────────┐
+</span><span class="z-text z-plain">                                                                                  
+</span><span class="z-text z-plain">  📄 DOCX  ──►  DOCXConverter  ──►  TableSafeChunker  ──►  Embedder (bge-m3)   
+</span><span class="z-text z-plain">                  (hierarchy)        (smart chunking)       (LM Studio)          
+</span><span class="z-text z-plain">                                                                    │            
+</span><span class="z-text z-plain">                                                                    ▼            
+</span><span class="z-text z-plain">                                                               Qdrant            
+</span><span class="z-text z-plain">                                                         (vectors + payload)     
+</span><span class="z-text z-plain">└─────────────────────────────────────────────────────────────────────────────────┘
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">┌──────────────────────────── QUERY PIPELINE ─────────────────────────────────────┐
+</span><span class="z-text z-plain">                                                                                  
+</span><span class="z-text z-plain">  💬 N8N  ──►  QueryRouter  ──►  HybridRetriever  ──►  AnswerGenerator          
+</span><span class="z-text z-plain">               (filters)          (dense + rerank)     (LM Studio LLM)           
+</span><span class="z-text z-plain">                                       │                      │                  
+</span><span class="z-text z-plain">                                       ▼                      ▼                  
+</span><span class="z-text z-plain">                                    Qdrant                  Answer               
+</span><span class="z-text z-plain">└─────────────────────────────────────────────────────────────────────────────────┘
+</span></code></pre>
+<hr />
+<h2 id="indexing-the-most-important-part">Indexing: The Most Important Part</h2>
+<p>The hardest part of RAG is not search. The hardest part is data preparation.</p>
+<h3 id="restoring-docx-hierarchy">Restoring DOCX Hierarchy</h3>
+<p>Standard libraries — for example, python-docx — see a document as a flat list of paragraphs. For QA, this is unacceptable. I wrote a custom <code>DOCXConverter</code> that relies exclusively on Word heading styles (<code>Heading 1</code>, <code>Heading 2</code>, etc.), ignoring manual numbering and text numbers in the document body.</p>
+<p>As a result, each block receives a <code>section_hierarchy</code> — a string like <code>"2.1.1.2"</code> that precisely indicates its position in the document tree. Every test case knows its place — for example, <code>2.1.1.3</code>. This enables accurate filtering by section.</p>
+<h3 id="table-safe-chunking">Table-Safe Chunking</h3>
+<p>Tables in test documentation contain critically important structural relationships: test steps in one column, expected results in another. Splitting a table into chunks destroys this relationship and renders the extracted fragments meaningless.</p>
+<p><code>TableSafeChunker</code> never splits tables. They are always indexed as a single block, converted to Markdown:</p>
+<pre data-lang="markdown" class="language-markdown z-code"><code class="language-markdown" data-lang="markdown"><span class="z-text z-html z-markdown"><span class="z-meta z-block-level z-markdown"><span class="z-meta z-table z-header z-markdown-gfm"><span class="z-punctuation z-separator z-table-cell z-markdown">|</span> Test method                  <span class="z-punctuation z-separator z-table-cell z-markdown">|</span> Evaluation criteria          <span class="z-punctuation z-separator z-table-cell z-markdown">|</span>
+</span></span></span><span class="z-text z-html z-markdown"><span class="z-meta z-block-level z-markdown"><span class="z-meta z-table z-header-separator z-markdown-gfm"><span class="z-punctuation z-separator z-table-cell z-markdown">|</span> <span class="z-punctuation z-section z-table-header z-markdown">----------------------------</span> <span class="z-punctuation z-separator z-table-cell z-markdown">|</span> <span class="z-punctuation z-section z-table-header z-markdown">----------------------------</span> <span class="z-punctuation z-separator z-table-cell z-markdown">|</span>
+</span><span class="z-meta z-table z-markdown-gfm"></span></span></span><span class="z-text z-html z-markdown"><span class="z-meta z-block-level z-markdown"><span class="z-meta z-table z-markdown-gfm"><span class="z-punctuation z-separator z-table-cell z-markdown">|</span> 1. Restart the computer      <span class="z-punctuation z-separator z-table-cell z-markdown">|</span> 1. Computer booted           <span class="z-punctuation z-separator z-table-cell z-markdown">|</span>
+</span></span></span><span class="z-text z-html z-markdown"><span class="z-meta z-block-level z-markdown"><span class="z-meta z-table z-markdown-gfm"><span class="z-punctuation z-separator z-table-cell z-markdown">|</span> 2. Open the Client           <span class="z-punctuation z-separator z-table-cell z-markdown">|</span> 2. Client opened             <span class="z-punctuation z-separator z-table-cell z-markdown">|</span>
+</span></span></span></code></pre>
+<p>LLMs process this format significantly better than raw XML or scattered strings. Text blocks are split with a 100-character overlap, which preserves context at fragment boundaries.</p>
+<h3 id="structured-payload-in-qdrant">Structured Payload in Qdrant</h3>
+<p>Each vector stores not only content but also rich structural metadata:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">payload</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-mapping-or-set z-python"><span class="z-punctuation z-section z-mapping-or-set z-begin z-python">{</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping-or-set z-python"></span><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">node_type<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">          </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">test_case<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">section_hierarchy<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">  </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">2.1.1.1<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">tested_function<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Client startup<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">chunk_type<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">         </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">table<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">parent_test<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">        </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Verify Client startup...<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">source_document<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">TestSpec_v2.3.docx<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span>
+</span></code></pre>
+<p>This turns the knowledge base into a manageable structure rather than a bag of text fragments. A query like "show only test cases from section 2.1" is executed via metadata filtering before vector search — result quality is significantly higher than global search across the entire base.</p>
+<h3 id="batch-vectorization">Batch Vectorization</h3>
+<p><code>Embedder</code> sends all chunks in <strong>a single batch request</strong> to LM Studio (bge-m3). Not N sequential requests — one. When indexing hundreds of chunks, this makes a meaningful difference in processing time.</p>
+<hr />
+<h2 id="query-pipeline">Query Pipeline</h2>
+<p>When I submit a question, the following happens:</p>
+<p><strong>1. QueryRouter</strong> analyzes the question and determines the search strategy: filter only by <code>test_case</code> type? Restrict to section <code>2.1</code>? Or search the entire base without filters?</p>
+<p><strong>2. HybridRetriever</strong> vectorizes the query, searches Qdrant with filters applied, and intentionally retrieves 3× more candidates than needed — over-retrieval required for quality reranking.</p>
+<p><strong>3. FlashRank</strong> reranks results using a cross-encoder model. Unlike cosine distance, a cross-encoder evaluates the (query, document) pair jointly — this produces significantly more accurate relevance scoring. Runs on CPU in under 50 ms.</p>
+<p><strong>4. AnswerGenerator</strong> constructs a prompt with context (tables represented as Markdown) and sends it to the LLM. Temperature <code>0.1</code> — a deliberate choice: in QA, reproducibility matters more than creativity.</p>
+<h3 id="local-inference-via-lm-studio">Local Inference via LM Studio</h3>
+<p>LM Studio provides an OpenAI-compatible API on top of any GGUF model. The same Python code that works with the OpenAI API works locally — just change the <code>base_url</code>:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">OpenAI</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">base_url</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">http://host.docker.internal:1234/v1<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">api_key</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">lm-studio<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>  <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> value doesn&#39;t matter, only the format is required
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p><code>bge-m3</code> was chosen for its native Russian language support without additional configuration — critical for documentation written in Russian.</p>
+<hr />
+<h2 id="what-this-delivers-in-practice">What This Delivers in Practice</h2>
+<p>The architecture enables several classes of tasks that previously consumed significant time when done manually.</p>
+<p><strong>Requirements coverage analysis.</strong> A query like "Which functional requirements from section 3.2 are not covered by test cases?" — the AI agent finds all requirements, finds all test cases, compares them, and produces a gap analysis. A task that takes several hours manually.</p>
+<p><strong>Test case generation.</strong> Input: a description of new functionality and existing test cases for a similar module. The agent generates a draft in the same format and style. The result requires review, but substantially reduces the time needed for initial development.</p>
+<p><strong>Contradiction detection.</strong> "Are there discrepancies between the requirements in section 4 and the evaluation criteria in section 6?" The agent analyzes both sections simultaneously and flags inconsistencies — a task humans easily miss at scale.</p>
+<p><strong>Semantic search, not keyword search.</strong> "Find all test cases related to authorization" — even though the documents use the terms "authentication", "login", and "sign-in" interchangeably. Vector search finds semantically similar fragments regardless of the specific words used.</p>
+<p>This is not a replacement for a QA engineer. It is an accelerator for working with text.</p>
+<hr />
+<h2 id="limitations-they-exist">Limitations — They Exist</h2>
+<p><strong>Resource constraints.</strong> Local execution means quantized models only — an unavoidable tradeoff between confidentiality and quality. It requires experimenting with quantization levels (Q4, Q5, Q8) and comparing the quality/speed ratio for specific tasks.</p>
+<p><strong>Agent looping.</strong> Situations occasionally arise where the agent enters an infinite cycle of re-querying or rephrasing. This is a known problem with agentic systems running on smaller models. I'm considering a switch to llama.cpp as the inference backend — it produces more predictable behavior on GGUF models.</p>
+<p><strong>Response latency.</strong> Local inference is slower than cloud. Using the host GPU brought throughput from single-digit tokens per second to hundreds — for tasks like "prepare a summary before a review", a 15–20 second delay is acceptable. But this is not the speed cloud users are accustomed to.</p>
+<p><strong>No versioning.</strong> When a document is re-indexed, the history of previous versions is not preserved. Comparing the current methodology with an earlier one is not currently possible without manual intervention.</p>
+<hr />
+<h2 id="what-i-plan-to-improve">What I Plan to Improve</h2>
+<p><strong>Sparse vectors in Qdrant.</strong> <code>bge-m3</code> can generate sparse vectors — Qdrant supports them natively. Integration is expected to yield a +15–25% accuracy improvement on technical terms and abbreviations.</p>
+<p><strong>Parent Document Retrieval.</strong> Search using small, precise chunks, but pass the entire parent block to the LLM as context. The model receives more context — answers become more coherent.</p>
+<p><strong>Agentic loop.</strong> Moving to level 4: the LLM decides how many times to search and what to look for. Required for multi-hop queries: "find all modules whose test cases mention the process <code>client.exe</code>" — a task that requires several sequential searches.</p>
+<p><strong>Document versioning.</strong> Storing version history via metadata will enable answering questions like "what changed in the test methodology between versions 2.1 and 2.3?"</p>
+<p><strong>Evaluation pipeline.</strong> This is arguably the most important item. There is currently no automated quality assessment for answers — it is unclear whether changes actually improve things or just feel like they do. Implementing RAGAS or an equivalent will provide measurable metrics: contextual precision, recall, relevance. Without this, iterations happen in the dark.</p>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>Local AI augmented with RAG is no longer a toy. It is a working tool.</p>
+<p>It is not perfect. It is not as fast as the cloud. It requires engineering effort. But it is fully autonomous, protects data, scales with documentation — and genuinely saves time.</p>
+<pre class="z-code"><code><span class="z-text z-plain">LM Studio (local models)
+</span><span class="z-text z-plain">  + bge-m3 (multilingual embedding)
+</span><span class="z-text z-plain">  + Qdrant (vector database)
+</span><span class="z-text z-plain">  + FlashRank (reranker)
+</span><span class="z-text z-plain">  + FastAPI (API layer)
+</span><span class="z-text z-plain">  + N8N (orchestration)
+</span><span class="z-text z-plain">= Fully local RAG agent for QA documentation
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">No cloud dependencies.
+</span><span class="z-text z-plain">No data leaks.
+</span><span class="z-text z-plain">Runs on a developer workstation.
+</span></code></pre>
+<p>The main takeaway: <strong>start at a reasonable complexity level</strong>. Not with knowledge graphs, not with agentic architectures. Start with a well-implemented hybrid + structured RAG. Adding complexity is only justified when the simpler solution stops handling real tasks.</p>
+<p>If you're building something similar or have already been down this road — I'd be glad to discuss it in the comments, especially around quality evaluation and the transition to agentic architectures.</p>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </main>
+
+                <!-- footer -->
+                <div class="row-start-3 ">
+                    
+
+                    
+                    <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded pt-6 gap-0">
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+                            <a class="link link-hover"
+                                href="/rust-iot-blog/about">About</a>
+                            
+                        </nav>
+                        
+                        <nav class="grid grid-flow-col gap-4 mb-6">
+                            
+
+
+<a href="https:&#x2F;&#x2F;github.com&#x2F;AnakenRalf" title="GitHub" target="_blank"><svg role="img" aria-label="Github" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg></a>
+
+
+
+
+
+
+
+<a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;@Rust-IoT" title="YouTube" target="_blank"><svg role="img" aria-label="Youtube" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z" /></svg></a>
+
+
+
+<a href="https:&#x2F;&#x2F;t.me&#x2F;RustIoT" title="Telegram" target="_blank"><svg role="img" aria-label="Telegram" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09" /></svg></a>
+
+
+<a href="https:&#x2F;&#x2F;www.patreon.com&#x2F;anakenr" title="Patreon" target="_blank"><svg role="img" aria-label="Patreon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="inline-block h-4 w-4 mr-2 h-8 w-8" viewBox="0 0 16 16"><path d="M 2 2 L 2 14 L 5.5 14 L 5.5 2 L 2 2 z M 10.75 2 C 8.4065 2 6.5 3.9065 6.5 6.25 C 6.5 8.5935 8.4065 10.5 10.75 10.5 C 13.0935 10.5 15 8.5935 15 6.25 C 15 3.9065 13.0935 2 10.75 2 z M 3 3 L 4.5 3 L 4.5 13 L 3 13 L 3 3 z M 10.75 3 C 12.542 3 14 4.458 14 6.25 C 14 8.042 12.542 9.5 10.75 9.5 C 8.958 9.5 7.5 8.042 7.5 6.25 C 7.5 4.458 8.958 3 10.75 3 z"/></svg></a>
+
+
+
+
+                            
+                        </nav>
+                        
+                        <aside>
+                            <p>© 2026 <a href="https://arlinksqa.web.app/contact">Ruslan Ausiannikau</a><br>Powered by <a href="https://getzola.org">Zola</a>, <a href="https://tailwindcss.com">TailwindCSS</a> & <a href="https://daisyui.com">DaisyUI</a></p>
+                        </aside>
+                        
+                    </footer>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-side z-60">
+            <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <ul class="menu menu-lg bg-base-200 min-h-full w-80 p-4">
+                
+                
+                <li>
+
+ 
+
+
+    
+    
+
+
+
+<a href="/rust-iot-blog/blog" class="link no-underline menu-active">
+        Posts
+</a>
+
+</li>
+                
+                <li>
+
+ 
+
+
+    
+
+
+
+<a href="/rust-iot-blog/tags" class="link no-underline ">
+        Tags
+</a>
+
+</li>
+                
+                
+                <hr class="mt-2 mb-2">
+                
+                <li>
+                    <details>
+                        <summary class="">Language
+                        </summary>
+                        <ul>
+                            <li><a href="https:&#x2F;&#x2F;anakenralf.github.io&#x2F;rust-iot-blog&#x2F;blog&#x2F;ai-rag-intro&#x2F;"
+                                    class="no-underline menu-active">English</a></li><li>
+    
+
+    
+        
+            
+        
+            
+                
+            
+        
+        
+    <a href="https://anakenralf.github.io/rust-iot-blog/ru/blog/ai-rag-intro/" class="no-underline">Русский</a>
+</li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+                
+                <li>
+                    <details>
+                        <summary class="">Theme</summary>
+                        <ul>
+                            
+                            <li><button class="" data-set-theme="light">Light</button></li>
+                            
+                            <li><button class="" data-set-theme="dark">Dark</button></li>
+                            
+                            <li><button class="" data-set-theme="cupcake">Cupcake</button></li>
+                            
+                            <li><button class="" data-set-theme="bumblebee">Bumblebee</button></li>
+                            
+                            <li><button class="" data-set-theme="emerald">Emerald</button></li>
+                            
+                            <li><button class="" data-set-theme="corporate">Corporate</button></li>
+                            
+                            <li><button class="" data-set-theme="synthwave">Synthwave</button></li>
+                            
+                            <li><button class="" data-set-theme="retro">Retro</button></li>
+                            
+                            <li><button class="" data-set-theme="cyberpunk">Cyberpunk</button></li>
+                            
+                            <li><button class="" data-set-theme="valentine">Valentine</button></li>
+                            
+                            <li><button class="" data-set-theme="halloween">Halloween</button></li>
+                            
+                            <li><button class="" data-set-theme="garden">Garden</button></li>
+                            
+                            <li><button class="" data-set-theme="forest">Forest</button></li>
+                            
+                            <li><button class="" data-set-theme="aqua">Aqua</button></li>
+                            
+                            <li><button class="" data-set-theme="lofi">Lofi</button></li>
+                            
+                            <li><button class="" data-set-theme="pastel">Pastel</button></li>
+                            
+                            <li><button class="" data-set-theme="fantasy">Fantasy</button></li>
+                            
+                            <li><button class="" data-set-theme="wireframe">Wireframe</button></li>
+                            
+                            <li><button class="" data-set-theme="black">Black</button></li>
+                            
+                            <li><button class="" data-set-theme="luxury">Luxury</button></li>
+                            
+                            <li><button class="" data-set-theme="dracula">Dracula</button></li>
+                            
+                            <li><button class="" data-set-theme="cmyk">CMYK</button></li>
+                            
+                            <li><button class="" data-set-theme="autumn">Autumn</button></li>
+                            
+                            <li><button class="" data-set-theme="business">Business</button></li>
+                            
+                            <li><button class="" data-set-theme="acid">Acid</button></li>
+                            
+                            <li><button class="" data-set-theme="lemonade">Lemonade</button></li>
+                            
+                            <li><button class="" data-set-theme="night">Night</button></li>
+                            
+                            <li><button class="" data-set-theme="coffee">Coffee</button></li>
+                            
+                            <li><button class="" data-set-theme="winter">Winter</button></li>
+                            
+                            <li><button class="" data-set-theme="dim">Dim</button></li>
+                            
+                            <li><button class="" data-set-theme="nord">Nord</button></li>
+                            
+                            <li><button class="" data-set-theme="sunset">Sunset</button></li>
+                            
+                            <li><button class="" data-set-theme="caramellatte">Caramellatte</button></li>
+                            
+                            <li><button class="" data-set-theme="abyss">Abyss</button></li>
+                            
+                            <li><button class="" data-set-theme="silk">Silk</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-light">Winterstein Light</button></li>
+                            
+                            <li><button class="" data-set-theme="winterstein-dark">Winterstein Dark</button></li>
+                            
+                        </ul>
+                    </details>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <script src="/rust-iot-blog/js/theme-change.js?wGsTCY"  ></script>
+    <script src="/rust-iot-blog/js/search.js?N1sXY2"  lang="en"></script>
+    <script src="/rust-iot-blog/elasticlunr.min.js?DJ2plm"  ></script>
+    
+    
+</body>

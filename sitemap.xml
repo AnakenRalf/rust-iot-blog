@@ -10,6 +10,10 @@
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/</loc>
     </url>
     <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/blog/ai-rag-intro/</loc>
+        <lastmod>2026-03-12</lastmod>
+    </url>
+    <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/blog/digital-twins-and-security-p1/</loc>
         <lastmod>2026-01-29</lastmod>
     </url>
@@ -51,6 +55,10 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/ai-rag-intro/</loc>
+        <lastmod>2026-03-12</lastmod>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/blog/digital-twins-and-security-p1/</loc>
@@ -96,6 +104,48 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/iot/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/llm/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/llm/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/local-ai/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/local-ai/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/n8n/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/n8n/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/python/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/python/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/qa/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/qa/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/qdrant/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/qdrant/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/rag/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/rag/page/1/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/ru/tags/rust/</loc>
@@ -159,6 +209,48 @@
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/led/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/llm/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/llm/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/local-ai/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/local-ai/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/n8n/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/n8n/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/python/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/python/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/qa/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/qa/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/qdrant/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/qdrant/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/rag/</loc>
+    </url>
+    <url>
+        <loc>https://anakenralf.github.io/rust-iot-blog/tags/rag/page/1/</loc>
     </url>
     <url>
         <loc>https://anakenralf.github.io/rust-iot-blog/tags/rust/</loc>
